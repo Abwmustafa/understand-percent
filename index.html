@@ -1,0 +1,1545 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Understand Percent</title>
+<meta name="description" content="Interactive workbook lesson: understand percent as a rate per 100.">
+<style>
+:root{
+  --desk:#d6dfe9; --paper:#ffffff; --ink:#1b2a3a; --muted:#566676; --line:#d3deea;
+  --brand:#1769aa; --brand-dark:#0e4a7a; --brand-soft:#dcebf8;
+  --hunds:#34495e; --tens:#5d6d7e; --ones:#2e86de; --tenths:#119c7f; --hund:#e07b16; --thou:#8e44ad;
+  --curious:#2f9e44; --learn:#7b3fb0; --together:#1769aa; --practice:#e07b16; --extend:#c2185b; --reflect:#119c7f;
+  --ok:#1e7e34; --ok-soft:#e2f3e6; --bad:#b83227; --bad-soft:#fbe6e3; --note:#fff6d6; --sun:#f2b705;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html,body{margin:0}
+body{overflow-x:clip}
+body{background:var(--desk);background-image:radial-gradient(rgba(255,255,255,.35) 1px,transparent 1px);background-size:18px 18px;color:var(--ink);font-family:system-ui,"Segoe UI",Roboto,Arial,sans-serif;font-size:18px;line-height:1.5;-webkit-text-size-adjust:100%}
+button{font:inherit;-webkit-tap-highlight-color:transparent}
+p{margin:0 0 12px}
+ul{margin:6px 0 0;padding-left:22px}
+.muted{color:var(--muted)} .small{font-size:15px} .center{text-align:center}
+
+/* ---------- top bar + mascot ---------- */
+header.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(6px)}
+.top-inner{max-width:920px;margin:0 auto;padding:6px 16px;display:flex;align-items:center;gap:12px;min-height:58px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--brand-dark);font-size:16px;white-space:nowrap}
+.brand svg{width:26px;height:26px}
+.dots{flex:1;display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
+.dots button{appearance:none;width:28px;height:28px;border-radius:8px;border:2px solid var(--line);background:#fff;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;padding:0}
+.dots button.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.dots button:hover{border-color:var(--brand)}
+.score{font-weight:800;color:#8a6500;background:#fff3c4;border-radius:999px;padding:4px 12px;white-space:nowrap;font-size:16px}
+.score.pop{animation:pop .45s ease}
+@keyframes pop{50%{transform:scale(1.25)}}
+.dot-mascot{width:48px;height:48px;flex:none;cursor:pointer}
+.dot-mascot svg{width:100%;height:100%;overflow:visible}
+.dot-mascot .eyes{transform-box:fill-box;transform-origin:center}
+.dot-mascot.blink .eyes{transform:scaleY(.12)}
+.dot-mascot.cheer{animation:cheer .7s ease}
+.dot-mascot.hmm{animation:hmm .6s ease}
+@keyframes cheer{25%{transform:translateY(-10px) rotate(-8deg)}50%{transform:translateY(0)}75%{transform:translateY(-6px) rotate(8deg)}}
+@keyframes hmm{25%{transform:rotate(-10deg)}75%{transform:rotate(10deg)}}
+.bubble{position:absolute;right:14px;top:62px;max-width:min(320px,calc(100vw - 28px));background:#fff;border:2px solid var(--brand);border-radius:16px;padding:8px 14px;font-size:16px;font-weight:600;color:var(--brand-dark);box-shadow:0 6px 18px rgba(20,40,70,.18);opacity:0;transform:translateY(-6px);transition:opacity .2s,transform .2s;pointer-events:none}
+.bubble.on{opacity:1;transform:none}
+.bubble::before{content:"";position:absolute;top:-9px;right:22px;width:14px;height:14px;background:#fff;border-left:2px solid var(--brand);border-top:2px solid var(--brand);transform:rotate(45deg)}
+
+/* ---------- book pages ---------- */
+main{max-width:920px;margin:0 auto;padding:96px 12px 110px}
+.book{perspective:2200px}
+.page{display:none;position:relative;background:var(--paper);border-radius:6px 16px 16px 6px;box-shadow:inset 16px 0 18px -16px rgba(0,0,0,.22),0 1px 0 #e9eef3,4px 5px 0 -1px #f4f6f8,4px 5px 0 0 #cfd8e2,8px 10px 0 -1px #f4f6f8,8px 10px 0 0 #cfd8e2,0 18px 36px rgba(20,40,70,.22);overflow:visible}
+.page.active{display:block}
+.page.in-next{transform-origin:left center;animation:inNext .55s cubic-bezier(.2,.7,.2,1)}
+.page.in-prev{transform-origin:right center;animation:inPrev .55s cubic-bezier(.2,.7,.2,1)}
+@keyframes inNext{from{transform:rotateY(-38deg) translateX(30px);opacity:0}to{transform:none;opacity:1}}
+@keyframes inPrev{from{transform:rotateY(30deg) translateX(-30px);opacity:0}to{transform:none;opacity:1}}
+/* pop-up book: things fold up off the page when it opens */
+.popup{transform-origin:50% 100%}
+.page.in-next .popup,.page.in-prev .popup{animation:foldUp .8s cubic-bezier(.2,1.3,.4,1) backwards;animation-delay:calc(.3s + var(--d,0s))}
+@keyframes foldUp{from{transform:perspective(800px) rotateX(82deg);opacity:0}to{transform:perspective(800px) rotateX(0deg);opacity:1}}
+/* floating 3D cube that sticks out of the page */
+.hero3d{position:absolute;right:-120px;top:-92px;width:380px;height:380px;z-index:4;pointer-events:none}
+.hero-bob{width:100%;height:100%;animation:heroBob 4s ease-in-out infinite}
+.hero3d svg{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 22px 16px rgba(0,0,0,.3))}
+@keyframes heroBob{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-16px) rotate(2deg)}}
+.page.in-next .hero3d,.page.in-prev .hero3d{animation:heroIn 1.1s cubic-bezier(.2,1.4,.4,1) backwards .25s}
+@keyframes heroIn{from{transform:translateY(140px) scale(.15) rotate(-30deg);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.page.in-next,.page.in-prev,.dot-mascot.cheer,.dot-mascot.hmm,.hero-bob,.page .popup,.page .hero3d,#stage .bob,#stage .shadow,.stage-wrap.popup .blk{animation:none !important}}
+.pg{padding:22px 34px 18px}
+.runhead{display:flex;justify-content:space-between;gap:10px;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#8aa0b6;border-bottom:2px solid #edf2f7;padding:12px 34px 8px}
+.pagefoot{display:flex;justify-content:space-between;align-items:center;font-size:14px;color:#8aa0b6;font-weight:700;padding:10px 34px 16px;border-top:2px solid #edf2f7;margin-top:10px}
+.pagefoot .pno{display:inline-grid;place-items:center;min-width:32px;height:32px;border-radius:50%;background:var(--brand-soft);color:var(--brand-dark)}
+
+/* banner */
+.banner{position:relative;background:linear-gradient(120deg,#0e4a7a 0%,#1769aa 55%,#119c7f 100%);color:#fff;padding:30px 34px 34px;min-height:200px;overflow:hidden;border-radius:6px 16px 0 0}
+.banner::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:22px 22px;pointer-events:none}
+.banner-text{position:relative;z-index:1;max-width:calc(100% - 250px)}
+.lesson-tag{display:inline-block;background:var(--sun);color:#3d2c00;font-weight:800;border-radius:999px;padding:3px 14px;font-size:15px;letter-spacing:.04em}
+.banner h1{font-size:40px;line-height:1.08;margin:10px 0 8px;text-shadow:0 2px 0 rgba(0,0,0,.15)}
+.banner .unit{font-weight:600;opacity:.9}
+
+/* section headings */
+.sec{display:flex;align-items:center;gap:12px;margin:26px 0 10px;font-size:27px;line-height:1.15;font-weight:800;color:var(--c)}
+.sec:first-child{margin-top:4px}
+.sec .ico{flex:none;width:46px;height:46px;border-radius:13px;background:var(--c);display:grid;place-items:center;transform:rotate(-6deg);box-shadow:0 3px 0 rgba(0,0,0,.12)}
+.sec .ico svg{width:26px;height:26px;fill:none;stroke:#fff;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+.sec::after{content:"";flex:1;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--c),transparent)}
+.lead{font-size:22px;font-weight:800;line-height:1.3;margin:0 0 6px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.box{border:2.5px solid #b9cde2;border-radius:18px;padding:14px 16px;margin:14px 0;background:#fff}
+.sidebox{border-radius:16px;padding:12px 16px;margin:14px 0;background:var(--note);border-left:8px solid var(--sun)}
+.sidebox.pattern{background:#f3eafa;border-left-color:var(--learn)}
+.sidebox .tab{display:inline-block;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#fff;background:var(--learn);border-radius:6px;padding:1px 8px;margin-bottom:6px}
+.targets{background:var(--brand-soft);border-radius:16px;padding:12px 16px}
+.namefield{display:block;font-weight:800}
+.namefield input{display:block;width:100%;margin-top:6px;font:inherit;padding:10px 12px;border:2.5px dashed #9fb7cf;border-radius:12px;background:#fbfdff}
+.lined{display:block;font-weight:800;color:var(--brand-dark)}
+.lined textarea,textarea.lined-ta{display:block;width:100%;margin-top:4px;font:inherit;font-size:18px;line-height:32px;min-height:98px;padding:0 10px;border:2px solid #c9d8e8;border-radius:12px;resize:vertical;background:#fff repeating-linear-gradient(transparent 0 31px,#d7e5f3 31px 32px);background-attachment:local}
+
+/* exercises */
+.ex{display:flex;gap:12px;padding:14px 0;border-top:2px dotted #d8e3ee}
+.ex:first-of-type{border-top:0}
+.exn{flex:none;width:36px;height:36px;border-radius:50%;background:var(--c,var(--practice));color:#fff;font-weight:800;display:grid;place-items:center;font-size:18px;margin-top:2px}
+.exb{flex:1;min-width:0}
+.extitle{font-weight:800;color:var(--c,var(--practice))}
+
+/* questions */
+.q{padding:10px 0}
+.q + .q{border-top:1px dashed var(--line)}
+.prompt{font-weight:600;margin-bottom:10px}
+.opts{display:grid;gap:10px}
+.opts.inline{grid-template-columns:repeat(var(--n,3),minmax(0,1fr))}
+.opt{appearance:none;text-align:left;color:var(--ink);background:#f7fafd;border:2px solid var(--line);border-radius:14px;padding:10px 14px;min-height:52px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:transform .12s,box-shadow .12s,border-color .12s}
+.opts.inline .opt{justify-content:center;text-align:center;font-weight:700}
+.opt:hover:not(:disabled){border-color:var(--brand);transform:translateY(-2px);box-shadow:0 4px 0 rgba(23,105,170,.18)}
+.opt:active:not(:disabled){transform:translateY(1px);box-shadow:none}
+.opt.sel{border-color:var(--brand);background:var(--brand-soft)}
+.opt.correct{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft);opacity:.8}
+.opt:disabled{cursor:default}
+.letter{flex:none;width:30px;height:30px;border-radius:50%;background:var(--brand-soft);color:var(--brand-dark);font-weight:700;display:grid;place-items:center;font-size:15px}
+.fb{margin-top:10px;border-radius:12px;font-size:17px}
+.fb.show{padding:10px 14px}
+.fb.ok{background:var(--ok-soft);color:#14501f}
+.fb.no{background:var(--bad-soft);color:#7a1f17}
+.blank{display:inline-block;min-width:74px;border-bottom:3px solid var(--brand);text-align:center;font-weight:700;color:var(--brand-dark);padding:0 6px}
+.blank.filled{border-color:var(--ok);color:var(--ok)}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;font-size:.78em;line-height:1.05;margin:0 2px}
+.frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 2px}
+input.num{font:inherit;font-weight:700;width:110px;padding:6px 10px;border:2px solid var(--brand);border-radius:10px;text-align:center}
+input.num.ok{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.btn{appearance:none;border:0;border-radius:14px;padding:12px 20px;font-weight:700;min-height:50px;cursor:pointer;background:var(--brand);color:#fff;transition:transform .12s}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn.ghost{background:var(--brand-soft);color:var(--brand-dark)}
+.btn.small{min-height:44px;padding:8px 16px;font-size:16px}
+.btn:disabled{opacity:.35;cursor:default}
+.check{margin-top:10px}
+.spark{position:fixed;width:9px;height:9px;border-radius:2px;pointer-events:none;z-index:60;animation:spark .8s ease-out forwards}
+@keyframes spark{to{transform:translate(var(--dx),var(--dy)) rotate(260deg);opacity:0}}
+
+/* tooltips */
+.tipwrap{position:relative}
+.tip{position:absolute;left:0;top:0;transform:translate(-50%,calc(-100% - 14px));background:var(--ink);color:#fff;padding:5px 10px;border-radius:9px;font-size:15px;font-weight:600;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity .12s;z-index:5}
+.tip.on{opacity:1}
+.tip::after{content:"";position:absolute;left:50%;bottom:-6px;margin-left:-6px;border:6px solid transparent;border-bottom:0;border-top-color:var(--ink)}
+
+/* be curious models */
+.models{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:10px 0}
+.model{margin:0;text-align:center}
+.model .tipwrap{background:#f7fafd;border:2px solid var(--line);border-radius:16px;padding:10px;cursor:crosshair;box-shadow:0 3px 0 #d3deea;transition:transform .28s cubic-bezier(.3,1.5,.5,1),box-shadow .28s,border-color .15s}
+.model .tipwrap:hover{border-color:var(--brand);transform:translateY(-12px) scale(1.05);box-shadow:0 7px 0 #b9cde2,0 26px 30px rgba(20,40,70,.25)}
+.model svg{display:block;width:100%;height:auto;touch-action:manipulation}
+.model figcaption{font-size:15px;margin-top:6px;min-height:42px;line-height:1.3}
+.model figcaption .q-mark{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--brand-soft);color:var(--brand-dark);font-weight:800}
+svg .hl{fill:rgba(242,183,5,.55);stroke:#c99700;stroke-width:2;pointer-events:none}
+
+/* grid explorer */
+.seg{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+.seg button{appearance:none;border:2px solid var(--brand);background:#fff;color:var(--brand-dark);border-radius:999px;padding:8px 14px;font-weight:700;font-size:15px;cursor:pointer;min-height:44px}
+.seg button.on{background:var(--brand);color:#fff}
+.grid100{display:grid;grid-template-columns:repeat(10,1fr);width:min(100%,360px);aspect-ratio:1;border:3px solid var(--ink);touch-action:none;background:#fff;user-select:none;-webkit-user-select:none;cursor:crosshair}
+.grid100 .cell{border-right:1px solid #9fb3c8;border-bottom:1px solid #9fb3c8;background:#fff;transition:background .08s}
+.grid100 .cell.on{background:var(--brand)}
+.grid100 .cell.pre{background:#fde9a6}
+.grid100 .cell.on.pre{background:#4f93cf}
+.readout{font-size:20px;margin:12px 0 8px}
+.bigval{font-size:30px;font-weight:800}
+.pair{display:flex;gap:22px;justify-content:center;flex-wrap:wrap;margin:6px 0 4px}
+.pair figure{margin:0;text-align:center}
+.pair .tipwrap{cursor:crosshair}
+.pair svg{display:block;width:150px;height:150px}
+.pair figcaption{font-size:16px;margin-top:4px}
+
+/* place value chart */
+.pv{display:grid;border:2.5px solid var(--brand-dark);border-radius:12px;overflow:hidden;background:#fff;max-width:640px;margin:8px auto}
+.pv .h{font-size:clamp(10px,2.8vw,14px);font-weight:700;color:#fff;text-align:center;padding:6px 2px;line-height:1.15;display:flex;align-items:center;justify-content:center}
+.pv .d{font-size:clamp(26px,7vw,40px);font-weight:800;text-align:center;padding:6px 0;border-left:1px solid var(--line);font-variant-numeric:tabular-nums;min-height:66px;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.pv .d.pt{border-left:0;padding:0}
+.pv .d.ph{color:#b7c4d1}
+.pv .d.hot{background:#fff6d6}
+.digit{appearance:none;border:3px solid currentColor;background:#fff;border-radius:12px;font-size:clamp(26px,7vw,38px);font-weight:800;width:min(56px,90%);height:56px;cursor:pointer;line-height:1;display:grid;place-items:center;transition:transform .12s}
+.digit:hover,.digit.hot{transform:translateY(-3px) scale(1.06);box-shadow:0 5px 0 rgba(0,0,0,.12)}
+.digit.hot{background:currentColor}
+.digit.hot span{color:#fff}
+.stage-wrap{position:relative;background:linear-gradient(#f6f9fc,#e2ebf5);border-radius:16px;margin:13% 0 6px;border:2px solid var(--line)}
+#stage{display:block;width:100%;height:auto;margin-top:-12.5%;overflow:visible;cursor:grab;touch-action:pan-y;font-family:system-ui,"Segoe UI",Roboto,Arial,sans-serif;position:relative;z-index:2}
+#stage .bob{animation:bob 3.6s ease-in-out infinite}
+#stage .shadow{transform-box:fill-box;transform-origin:center;animation:shadowPulse 3.6s ease-in-out infinite}
+#stage .blk{transform-box:fill-box;transform-origin:50% 100%;transition:transform .35s cubic-bezier(.3,1.5,.5,1)}
+#stage .blk.lift{transform:translateY(-16px) scale(1.1)}
+.stage-wrap.popup .blk{animation:rise 1s cubic-bezier(.2,1.45,.4,1) backwards}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes shadowPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.76);opacity:.5}}
+@keyframes rise{from{transform:translateY(80px) scaleY(.05);opacity:0}to{transform:none;opacity:1}}
+.stage-hint{position:absolute;left:12px;bottom:8px;z-index:3;font-size:13px;font-weight:700;color:var(--muted);background:rgba(255,255,255,.8);border-radius:999px;padding:2px 10px;pointer-events:none}
+.info{background:#f7fafd;border-radius:14px;padding:12px 14px;margin-top:10px;min-height:56px}
+/* a small 3D model beside every question */
+.q.has3d{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:18px;align-items:start}
+.q.has3d>.qmain{min-width:0}
+.d3{position:relative;margin-top:30px;background:linear-gradient(#f6f9fc,#e2ebf5);border:2px solid var(--line);border-radius:14px;padding:0 8px 8px}
+.d3 svg{display:block;width:100%;height:auto;margin-top:-34px;overflow:visible;cursor:grab;touch-action:pan-y;user-select:none;-webkit-user-select:none;font-family:system-ui,"Segoe UI",Roboto,Arial,sans-serif;position:relative;z-index:2}
+.d3 svg:active{cursor:grabbing}
+.d3 .bob{animation:bob 3.6s ease-in-out infinite}
+.d3 .shadow{transform-box:fill-box;transform-origin:center;animation:shadowPulse 3.6s ease-in-out infinite}
+.d3cap{font-size:15px;line-height:1.4;min-height:2.8em;padding:0 2px;color:var(--ink)}
+.d3cap .chain{margin-top:4px}
+.d3btns{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.d3btns:empty{display:none}
+.d3btns button{appearance:none;border:0;border-radius:10px;background:var(--brand-soft);color:var(--brand-dark);font-weight:800;font-size:15px;padding:6px 10px;min-height:40px;cursor:pointer;flex:1 1 auto}
+.d3btns button.on{background:var(--brand);color:#fff}
+.d3btns button:disabled{opacity:.35;cursor:default}
+.d3hint{font-size:12px;font-weight:700;color:var(--muted);text-align:center;margin-top:6px}
+.grid3d{max-width:380px}
+@media (max-width:760px){.q.has3d{grid-template-columns:1fr;gap:10px}.q.has3d>.d3{order:-1;width:100%;max-width:420px;justify-self:center}}
+@media (prefers-reduced-motion:reduce){.d3 .bob,.d3 .shadow{animation:none !important}}
+.speech-row{display:flex;gap:12px;align-items:center;margin:4px 0 10px}
+.kid{flex:none;width:64px;height:64px}
+.speech{background:#f3eafa;border-radius:18px;padding:12px 16px;position:relative;font-size:19px}
+.speech::before{content:"";position:absolute;left:-10px;top:22px;border:10px solid transparent;border-left:0;border-right-color:#f3eafa}
+/* slider */
+.rule{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 10px}
+.rule>div{border-radius:14px;padding:10px;text-align:center;font-size:15px;line-height:1.35}
+.rule big{display:block;font-size:26px;font-weight:800;margin:2px 0}
+.rule .l{background:#e1f0fb;color:#0e4a7a}
+.rule .r{background:#fdeedd;color:#8a4a0c}
+.slide-wrap{position:relative;max-width:640px;margin:0 auto}
+.drag-digit{position:absolute;left:0;top:0;transform:translate(-50%,-50%);width:54px;height:58px;border-radius:12px;background:var(--brand);color:#fff;font-size:36px;font-weight:800;display:grid;place-items:center;cursor:grab;touch-action:none;user-select:none;box-shadow:0 4px 0 #0e4a7a,0 8px 16px rgba(14,74,122,.3);z-index:2}
+.drag-digit.anim{transition:left .22s cubic-bezier(.3,1.4,.5,1),top .22s}
+.drag-digit.drag{cursor:grabbing;transform:translate(-50%,-62%) scale(1.08) rotate(-3deg)}
+.drag-digit:focus-visible{outline:4px solid var(--sun)}
+.ctrl{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.chain{display:inline-flex;flex-wrap:wrap;align-items:center;gap:6px}
+.chain i{font-style:normal;font-size:13px;font-weight:800;border-radius:999px;padding:1px 8px}
+.chain i.up{background:#e1f0fb;color:#0e4a7a}
+.chain i.dn{background:#fdeedd;color:#8a4a0c}
+
+/* practice bits */
+.wallets{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:4px 0 8px}
+.wallet{background:#f7fafd;border:2px solid var(--line);border-radius:14px;padding:10px;text-align:center;transition:transform .15s}
+.wallet:hover{transform:translateY(-3px) rotate(-1deg)}
+.wallet b{display:block}
+.wallet span{font-size:20px;font-weight:800;color:var(--brand-dark)}
+.bignum{font-size:46px;font-weight:800;text-align:center;letter-spacing:.06em;margin:4px 0 10px;font-variant-numeric:tabular-nums}
+.dg{position:relative;display:inline-block;cursor:help;border-radius:8px;padding:0 3px;transition:background .12s}
+.dg:hover,.dg.show{background:#fff3c4}
+.dg::after{content:attr(data-place);position:absolute;left:50%;bottom:100%;transform:translate(-50%,-4px);background:var(--ink);color:#fff;font-size:14px;font-weight:600;letter-spacing:0;white-space:nowrap;padding:3px 9px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .12s}
+.dg:hover::after,.dg.show::after{opacity:1}
+.hl-blue{color:#155a9c;border-bottom:5px solid #155a9c}
+.hl-orange{color:#a14f06;border-bottom:5px solid #a14f06}
+.tag{border-radius:6px;padding:0 5px;font-weight:700}
+.tag.blue{background:#d6eafc;color:#155a9c}
+.tag.orange{background:#fde3c8;color:#a14f06}
+.steps{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;font-weight:800;font-size:22px;margin:8px 0}
+.steps i{font-style:normal;font-size:14px;color:var(--ok);background:var(--ok-soft);border-radius:999px;padding:2px 10px}
+
+/* builder */
+.tray{display:flex;gap:10px;justify-content:center;min-height:68px;margin:10px 0;align-items:center}
+.tile{appearance:none;width:56px;height:60px;border-radius:12px;border:3px solid var(--brand);background:#fff;color:var(--ink);font-size:30px;font-weight:800;cursor:grab;touch-action:none;user-select:none;transition:transform .12s,box-shadow .12s;box-shadow:0 3px 0 rgba(14,74,122,.25)}
+.tile:hover{transform:translateY(-3px)}
+.tile.sel{background:var(--brand);color:#fff;transform:translateY(-4px)}
+.tile.lifting{opacity:.35}
+.tile.ghost{position:fixed;left:0;top:0;pointer-events:none;transform:translate(-50%,-50%) scale(1.12) rotate(-5deg);z-index:70;box-shadow:0 12px 24px rgba(0,0,0,.25)}
+.slots{display:flex;align-items:flex-start;justify-content:center;gap:6px}
+.slot-wrap{display:flex;flex-direction:column;align-items:center;font-size:13px;color:var(--muted);gap:2px}
+.slot{width:68px;height:74px;border:3px dashed #8aa4bf;border-radius:14px;background:#f7fafd;display:grid;place-items:center;cursor:pointer;transition:background .12s,border-color .12s}
+.slot.filled{border-style:solid;border-color:var(--brand);background:#fff}
+.slot.over{background:#fff3c4;border-color:var(--sun)}
+.slot .tile{box-shadow:none}
+.point{font-size:46px;font-weight:900;line-height:74px}
+
+/* reflect + results */
+details{margin-top:10px}
+summary{cursor:pointer;font-weight:700;color:var(--brand-dark);padding:6px 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{appearance:none;border:2px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:8px 14px;cursor:pointer;min-height:44px;transition:transform .12s}
+.chip:hover{transform:translateY(-2px)}
+.chip.sel{border-color:var(--tenths);background:#dff4ee}
+.stars{font-size:52px;color:var(--sun);letter-spacing:6px;line-height:1.1}
+.score-big{font-size:26px}
+.review{text-align:left;max-width:460px;margin:10px auto 0}
+.results{border:3px solid var(--sun);border-radius:20px;padding:18px;text-align:center;background:#fffdf3}
+
+nav.bottom{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.97);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));z-index:20}
+.nav-inner{max-width:920px;margin:0 auto;display:flex;gap:12px;justify-content:space-between;align-items:center}
+.nav-inner .btn{min-width:150px}
+.pageof{color:var(--muted);font-weight:700;font-size:15px}
+
+@media (max-width:760px){
+  .two{grid-template-columns:1fr}
+  .pg{padding:18px 18px 14px}
+  .runhead,.pagefoot{padding-left:18px;padding-right:18px}
+  .banner{padding:24px 18px 28px}
+  .banner h1{font-size:32px}
+  main{padding-top:70px}
+  .hero3d{width:220px;height:220px;right:-46px;top:-66px}
+  .banner-text{max-width:none;padding-right:120px}
+  .dots{display:none}
+  .brand span{display:none}
+  .top-inner{justify-content:space-between}
+  .nav-inner .btn{min-width:0;flex:1}
+  .pageof{display:none}
+}
+@media (max-width:520px){
+  .opts.inline.n4{grid-template-columns:repeat(2,1fr)}
+  .opts.inline.n5{grid-template-columns:repeat(3,1fr)}
+  .sec{font-size:23px}
+  .sec .ico{width:40px;height:40px}
+  .models{gap:6px}
+  .model .tipwrap{padding:5px}
+  .model figcaption{font-size:12.5px}
+  .bignum{font-size:40px}
+  .wallets{gap:6px}.wallet span{font-size:17px}
+  .slot{width:58px;height:68px}.point{line-height:68px}
+  .exn{width:30px;height:30px;font-size:16px}
+  .ex{gap:8px}
+  .pair svg{width:130px;height:130px}
+}
+/* ---- understand percent ---- */
+.mini{display:block;margin:4px 0 10px;max-width:100%;overflow-x:auto}
+.mini svg{display:block;max-width:100%;height:auto}
+.sheet-art{display:block;width:min(330px,90%);height:auto;margin:6px auto 0}
+.pct3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0}
+.pct3>div{background:#f7fafd;border:2px solid var(--line);border-radius:14px;padding:8px;text-align:center;font-weight:800;font-size:21px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.pct3 small{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.modelpick{max-width:420px;margin:0 auto}
+.grids{display:flex;gap:10px;flex-wrap:wrap}
+.grids .grid100{width:min(100%,360px)}
+.grids.multi .grid100{width:calc(50% - 5px);max-width:240px}
+.grid100 .cell.on{background:#2e86de}
+.readout{font-size:18px;margin:10px 0 0;min-height:30px}
+.barw{display:flex;width:100%;max-width:520px;height:60px;border:3px solid var(--ink);border-radius:6px;overflow:hidden;margin:10px auto;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.barw button{appearance:none;flex:1 1 0;border:0;border-right:2px solid var(--ink);background:#fff;cursor:pointer;font-weight:800;font-size:13px;color:var(--muted);min-width:0;padding:0}
+.barw button:last-child{border-right:0}
+.barw button:hover{background:#fde9a6}
+.barw button.on{background:var(--hund);color:#fff}
+.times{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin:10px 0}
+.times input[type=range]{width:min(320px,100%);accent-color:var(--brand);min-height:44px}
+.timesv{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;min-width:90px;text-align:center}
+.say{appearance:none;border:0;background:var(--brand);color:#fff;border-radius:999px;min-width:44px;min-height:44px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-weight:800;font-size:16px;padding:0 12px;vertical-align:middle}
+.say:hover{background:var(--brand-dark)}
+.say.small{min-width:38px;min-height:38px;padding:0 8px}
+.say svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.say[hidden]{display:none}
+.steps4{counter-reset:s;list-style:none;padding:0;margin:8px 0 12px;display:grid;gap:6px}
+.steps4 li{counter-increment:s;background:#f7fafd;border-radius:12px;padding:8px 12px 8px 48px;position:relative}
+.steps4 li::before{content:counter(s);position:absolute;left:11px;top:50%;transform:translateY(-50%);width:27px;height:27px;border-radius:50%;background:var(--learn);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+@media (max-width:520px){
+  .hero3d{width:200px;height:200px;right:-6px;top:-60px}
+  .pct3>div{font-size:17px;padding:6px 4px}
+  .timesv{font-size:26px}
+  .opts.inline .opt{white-space:normal;min-width:0}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <div class="brand"><svg viewBox="0 0 24 24" fill="none" stroke="#0e4a7a" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 5c3-1.5 6-1.5 9 0v15c-3-1.5-6-1.5-9 0zM12 5c3-1.5 6-1.5 9 0v15c-3-1.5-6-1.5-9 0z"/></svg><span>Percent</span></div>
+    <div class="dots" id="dots" aria-label="Pages"></div>
+    <div class="score" id="score" title="Stars for answers right on the first try">★ 0</div>
+    <div class="dot-mascot" id="dot" title="Dot, your maths helper" aria-hidden="true">
+      <svg viewBox="-26 -26 52 52">
+        <circle r="22" fill="#1769aa"/><circle cx="-8" cy="-11" r="7" fill="rgba(255,255,255,.22)"/>
+        <g class="eyes"><ellipse cx="-7.5" cy="-3" rx="5.6" ry="6.2" fill="#fff"/><ellipse cx="7.5" cy="-3" rx="5.6" ry="6.2" fill="#fff"/>
+          <circle class="pupil" data-x="-7.5" cx="-7.5" cy="-3" r="2.9" fill="#1b2a3a"/><circle class="pupil" data-x="7.5" cx="7.5" cy="-3" r="2.9" fill="#1b2a3a"/></g>
+        <circle cx="-14.5" cy="7" r="3.2" fill="#ff9db0" opacity=".75"/><circle cx="14.5" cy="7" r="3.2" fill="#ff9db0" opacity=".75"/>
+        <path id="mouth" d="M-7 8 Q0 15 7 8" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+  <div class="bubble" id="bubble" role="status" aria-live="polite"></div>
+</header>
+
+<main>
+<noscript><div class="page active"><div class="pg">This lesson needs JavaScript. Please open it in a normal web browser.</div></div></noscript>
+<div class="book" id="book">
+
+<!-- ================= PAGE 1 ================= -->
+<article class="page" data-tip="Hi! I'm Dot. Today you find out what the % sign really means!" data-tip-touch="Hi! I'm Dot. Today you find out what the % sign really means!">
+  <div class="hero3d" id="hero" aria-hidden="true"><div class="hero-bob"><svg id="heroSvg" viewBox="0 0 300 300"></svg></div></div>
+  <div class="banner">
+    <div class="banner-text">
+      <span class="lesson-tag">MATHS</span>
+      <h1>Understand Percent</h1>
+      <span class="unit">A rate per 100 · Grids and tape diagrams · More than 100%</span>
+    </div>
+  </div>
+  <div class="pg">
+    <div class="two">
+      <div class="targets"><b>Today I can…</b>
+        <ul>
+          <li>explain that a <b>percent</b> is a rate per 100</li>
+          <li>explain why a percent <b>greater than 100%</b> is more than one whole</li>
+          <li>use <b>decimal grids</b> and <b>tape diagrams</b> to solve percent problems</li>
+        </ul>
+      </div>
+      <div>
+        <label class="namefield">My name<input id="name" type="text" autocomplete="off" maxlength="40" placeholder="Type your name"></label>
+        <p class="muted small" style="margin-top:8px">Your answers stay on this device. Your <b>first try</b> earns a ★. Keep trying until you get it right!</p>
+      </div>
+    </div>
+
+    <h2 class="sec" style="--c:var(--curious)"><span class="ico" data-icon="search"></span>Be Curious</h2>
+    <p class="lead">What do you notice? What do you wonder?</p>
+    <p>Look at the sticky notes on the board.</p>
+    <div id="board" class="popup"></div>
+    <div class="two">
+      <label class="lined">I notice…<textarea data-note="notice"></textarea></label>
+      <label class="lined">I wonder…<textarea data-note="wonder"></textarea></label>
+    </div>
+    <div class="sidebox pattern"><span class="tab">Mindset</span><br>Can looking at a problem from a new side help you in maths?</div>
+    <div class="box">
+      <div class="q" data-q="s1a"></div>
+      <div class="q" data-q="s1b"></div>
+      <div class="q" data-q="s1c"></div>
+    </div>
+  </div>
+  <footer class="pagefoot"><span>Understand Percent</span><span class="pno"></span></footer>
+</article>
+
+<!-- ================= PAGE 2 ================= -->
+<article class="page" data-tip="4 out of 10 is the same as 40 out of 100. Shade it and see!" data-tip-touch="4 out of 10 is the same as 40 out of 100. Shade it and see!">
+  <div class="runhead"><span>Understand Percent</span><span>Learn</span></div>
+  <div class="pg">
+    <h2 class="sec" style="--c:var(--learn)"><span class="ico" data-icon="bulb"></span>Learn: School Mascot</h2>
+    <p>Students voted for a new school mascot: a tiger, a shark or an eagle. The results show that <b>4 out of every 10</b> voters chose the tiger. <button type="button" class="say small" data-say="Students voted for a new school mascot: a tiger, a shark or an eagle. The results show that 4 out of every 10 voters chose the tiger." aria-label="Hear it"><span data-speaker></span></button></p>
+    <div class="box"><div class="q" data-q="m1"></div></div>
+    <p>A <b>percent</b> is a ratio, or rate, that compares a number with <b>100</b>. You can write a percent as a fraction with a denominator of 100, or with the percent sign <b>%</b>.</p>
+    <div class="pct3 popup">
+      <div><small>In words</small>40 out of 100</div>
+      <div><small>As a fraction</small><span class="frac"><span>40</span><span>100</span></span></div>
+      <div><small>As a percent</small>40%</div>
+    </div>
+    <p>Pick a model. Each one shows the tiger votes.</p>
+    <div class="modelpick" id="models3d"></div>
+    <p class="muted small center">Hundredths grid: each square is 1%. Tenths grid: each strip is 10%. <span class="frac"><span>4</span><span>10</span></span> = <span class="frac"><span>40</span><span>100</span></span> = 40%</p>
+    <p class="lead" style="margin-top:14px">Now you shade it. <span class="hover-text muted small" data-touch="Slide your finger to shade many squares at once.">Drag the mouse to shade many squares at once.</span></p>
+    <div class="shadegrid" data-grid="sg1"></div>
+    <div class="sidebox pattern" data-reveal-when="g1 g2" hidden><span class="tab">Pattern spotter</span><br>Every square is <b>1%</b> and every column is <b>10%</b>. So 23% is 2 columns and 3 squares: 20% + 3% = 23%.</div>
+    <p class="lead" style="margin-top:14px"><b>Explore more</b></p>
+    <div class="box">
+      <div class="q" data-q="m2"></div>
+      <div class="q" data-q="m3"></div>
+    </div>
+  </div>
+  <footer class="pagefoot"><span>Understand Percent</span><span class="pno"></span></footer>
+</article>
+
+<!-- ================= PAGE 3 ================= -->
+<article class="page" data-tip="The grey kitten is the whole: 100%. Press the button to add the orange kitten!" data-tip-touch="The grey kitten is the whole: 100%. Tap the button to add the orange kitten!">
+  <div class="runhead"><span>Understand Percent</span><span>Learn</span></div>
+  <div class="pg">
+    <h2 class="sec" style="--c:var(--learn)"><span class="ico" data-icon="bulb"></span>Learn: Shanice’s Kittens</h2>
+    <p>Shanice’s cat had two kittens, a grey kitten and an orange kitten. The grey kitten weighs <b>4 ounces</b>. The orange kitten weighs <b>1.5 times</b> as much as the grey kitten. <button type="button" class="say small" data-say="Shanice's cat had two kittens, a grey kitten and an orange kitten. The grey kitten weighs 4 ounces. The orange kitten weighs 1.5 times as much as the grey kitten." aria-label="Hear it"><span data-speaker></span></button></p>
+    <p>A <b>tape diagram</b> can show the two weights. The grey kitten’s weight is the whole: one bar of 10 equal parts, so each part is 10%.</p>
+    <div class="box">
+      <div class="q" data-q="k1"></div>
+      <div class="q" data-q="k2"></div>
+    </div>
+    <p class="lead" style="margin-top:14px"><b>Explore more</b></p>
+    <div class="box"><div class="q" data-q="k3"></div></div>
+
+    <div class="sidebox" style="margin-top:16px">
+      <b>Make your own tape diagram</b><br>Choose how many equal parts the bar has, then tap parts to shade them.
+      <div class="two" style="margin-top:8px">
+        <div>
+          <div class="seg" id="barParts" role="group" aria-label="Number of equal parts"></div>
+          <div class="barw" id="barw"></div>
+          <p class="readout" id="barRead" aria-live="polite"></p>
+        </div>
+        <div id="bar3d"></div>
+      </div>
+    </div>
+  </div>
+  <footer class="pagefoot"><span>Understand Percent</span><span class="pno"></span></footer>
+</article>
+
+<!-- ================= PAGE 4 ================= -->
+<article class="page" data-tip="Move the slider past 1. What happens to the grids?" data-tip-touch="Slide past 1. What happens to the grids?">
+  <div class="runhead"><span>Understand Percent</span><span>Summarize · Apply</span></div>
+  <div class="pg">
+    <h2 class="sec" style="--c:var(--learn)"><span class="ico" data-icon="bulb"></span>Summarize: Understand Percent</h2>
+    <ol class="steps4">
+      <li>A percent is a ratio, or rate, that compares a number with <b>100</b>.</li>
+      <li>A percent can be written with the percent sign, <b>%</b>.</li>
+      <li>A percent can be <b>greater than 100%</b>. Then it is more than one whole.</li>
+    </ol>
+    <p>Move the slider. How many times as much is the amount? What percent is that?</p>
+    <div class="two">
+      <div>
+        <div class="times"><label for="timesR"><b>Times as much</b></label><input type="range" id="timesR" min="0.1" max="3" step="0.1" value="1"><span class="timesv" id="timesV"></span></div>
+        <div class="info" id="timesRead" aria-live="polite"></div>
+      </div>
+      <div id="times3d"></div>
+    </div>
+
+    <h2 class="sec" style="--c:var(--together)"><span class="ico" data-icon="people"></span>Apply: Car Sales</h2>
+    <p>A car dealership sold <b>100 cars</b> last month: <b>8</b> hybrid, <b>18</b> all-electric and <b>74</b> gas-powered. The owner needs to order <b>50 more cars</b> from the factory. <button type="button" class="say small" data-say="A car dealership sold 100 cars last month: 8 hybrid, 18 all-electric and 74 gas-powered. The owner needs to order 50 more cars from the factory." aria-label="Hear it"><span data-speaker></span></button></p>
+    <p>Based on these sales, how many of each type of car would you order?</p>
+    <div class="box">
+      <div class="q" data-q="c0"></div>
+      <div class="q" data-q="c1"></div>
+      <div class="q" data-q="c2"></div>
+      <div class="q" data-q="c3"></div>
+    </div>
+  </div>
+  <footer class="pagefoot"><span>Understand Percent</span><span class="pno"></span></footer>
+</article>
+
+<!-- ================= PAGE 5 ================= -->
+<article class="page" data-tip="Practice time! First find out what one part is worth." data-tip-touch="Practice time! First find out what one part is worth.">
+  <div class="runhead"><span>Understand Percent</span><span>Practice</span></div>
+  <div class="pg">
+    <h2 class="sec" style="--c:var(--practice)"><span class="ico" data-icon="pencil"></span>Practice: What Percent Does the Model Show?</h2>
+    <div class="ex"><span class="exn">1</span><div class="exb"><div class="extitle">Tape diagram</div><div class="q" data-q="q1"></div></div></div>
+    <div class="ex"><span class="exn">2</span><div class="exb"><div class="extitle">Hundredths grid</div><div class="q" data-q="q2"></div></div></div>
+    <div class="ex"><span class="exn">3</span><div class="exb"><div class="extitle">Complete the ratio</div><div class="q" data-q="q3"></div></div></div>
+    <div class="ex"><span class="exn">4</span><div class="exb"><div class="extitle">Complete the ratio</div><div class="q" data-q="q4"></div></div></div>
+    <div class="ex"><span class="exn">5</span><div class="exb"><div class="extitle">Complete the ratio</div><div class="q" data-q="q5"></div></div></div>
+    <div class="ex"><span class="exn">6</span><div class="exb"><div class="extitle">Complete the ratio</div><div class="q" data-q="q6"></div></div></div>
+  </div>
+  <footer class="pagefoot"><span>Understand Percent</span><span class="pno"></span></footer>
+</article>
+
+<!-- ================= PAGE 6 ================= -->
+<article class="page" data-tip="Find the whole first. The whole is always 100%." data-tip-touch="Find the whole first. The whole is always 100%.">
+  <div class="runhead"><span>Understand Percent</span><span>Practice</span></div>
+  <div class="pg">
+    <h2 class="sec" style="--c:var(--practice)"><span class="ico" data-icon="pencil"></span>Practice: Percent in Real Life</h2>
+    <div class="ex"><span class="exn">7</span><div class="exb">
+      <div class="extitle">New restaurant</div>
+      <p>In a school survey, 2 out of every 10 students said they had tried the new restaurant in town.</p>
+      <div class="q" data-q="w1"></div>
+    </div></div>
+    <div class="ex"><span class="exn">8</span><div class="exb">
+      <div class="extitle">Car park</div>
+      <p>7 out of every 10 cars in a car park are white.</p>
+      <div class="q" data-q="w2"></div>
+    </div></div>
+    <div class="ex"><span class="exn">9</span><div class="exb">
+      <div class="extitle">Popcorn</div>
+      <p>The size of a medium popcorn is 1.7 times the size of a small popcorn.</p>
+      <div class="q" data-q="w3"></div>
+    </div></div>
+    <div class="ex"><span class="exn">10</span><div class="exb">
+      <div class="extitle">STEM: Sharks</div>
+      <p>An Atlantic blacktip shark can grow to be 6<span class="frac"><span>1</span><span>2</span></span> feet long. A mako shark is 2 times as long as a blacktip shark.</p>
+      <div class="q" data-q="w4"></div>
+    </div></div>
+    <div class="ex"><span class="exn">11</span><div class="exb">
+      <div class="extitle">Sofia’s lemonade</div>
+      <p>Sofia sold 1.3 times as many cups of lemonade this week as last week. Each grid is last week’s sales: 100%.</p>
+      <div class="shadegrid" data-grid="sg2"></div>
+      <div class="q" data-q="f10"></div>
+      <div class="q" data-q="f11"></div>
+    </div></div>
+    <div class="ex" style="--c:var(--extend)"><span class="exn">12</span><div class="exb">
+      <div class="extitle">Error Analysis</div>
+      <div class="speech" style="margin:6px 0 10px 10px">Andrew says, “To write a number as a percent, just write the number and then the % sign.”</div>
+      <div class="q" data-q="a1"></div><div class="q" data-q="a2"></div>
+    </div></div>
+  </div>
+  <footer class="pagefoot"><span>Understand Percent</span><span class="pno"></span></footer>
+</article>
+
+<!-- ================= PAGE 7 ================= -->
+<article class="page" data-tip="Check your understanding. You can do it!" data-tip-touch="Check your understanding. You can do it!">
+  <div class="runhead"><span>Understand Percent</span><span>Check Your Understanding</span></div>
+  <div class="pg">
+    <h2 class="sec" style="--c:var(--extend)"><span class="ico" data-icon="star"></span>Check Your Understanding</h2>
+    <div class="ex" style="--c:var(--extend)"><span class="exn">13</span><div class="exb">
+      <div class="extitle">Shade the grid</div>
+      <div class="shadegrid" data-grid="sg3"></div>
+    </div></div>
+    <div class="ex" style="--c:var(--extend)"><span class="exn">14</span><div class="exb">
+      <div class="extitle">Tape diagram</div>
+      <div class="q" data-q="z2"></div>
+    </div></div>
+    <div class="ex" style="--c:var(--extend)"><span class="exn">15</span><div class="exb">
+      <div class="extitle">Distance from school</div>
+      <p>A survey finds that 3 out of every 10 students in Springfield live more than 2 miles from their school.</p>
+      <div class="q" data-q="z3"></div>
+    </div></div>
+    <div class="ex" style="--c:var(--extend)"><span class="exn">16</span><div class="exb">
+      <div class="extitle">Frozen yogurt</div>
+      <p>A frozen yogurt shop sells 2.7 times as many vanilla frozen yogurts as strawberry frozen yogurts.</p>
+      <div class="q" data-q="z4"></div>
+    </div></div>
+    <div class="ex" style="--c:var(--extend)"><span class="exn">17</span><div class="exb">
+      <div class="extitle">Travel by train</div>
+      <p>4 out of 5 people in a survey said they would travel by train more often if it cost less. Steve says that 40% of the people said this.</p>
+      <div class="q" data-q="z5a"></div><div class="q" data-q="z5b"></div>
+    </div></div>
+  </div>
+  <footer class="pagefoot"><span>Understand Percent</span><span class="pno"></span></footer>
+</article>
+
+<!-- ================= PAGE 8 ================= -->
+<article class="page" data-results="1" data-tip="Last page! Show your score to your teacher." data-tip-touch="Last page! Show your score to your teacher.">
+  <div class="runhead"><span>Understand Percent</span><span>Reflect</span></div>
+  <div class="pg">
+    <h2 class="sec" style="--c:var(--reflect)"><span class="ico" data-icon="chat"></span>Reflect</h2>
+    <p class="prompt">How are percents less than 100% and percents greater than 100% alike? How are they different?</p>
+    <textarea id="reflect" class="lined-ta" placeholder="Write your idea here…"></textarea>
+    <details><summary>See an example answer</summary>
+      <p>Both compare a number with 100. Both can be shown on hundredths grids or tape diagrams. A percent less than 100% is less than one whole, so only part of one grid is shaded. A percent greater than 100% is more than one whole, so I need more than one grid. For example, 130% is one full grid and 30 squares of another grid.</p>
+    </details>
+    <div class="sidebox" style="margin-top:18px">
+      <b>Mindset: a new point of view</b><br>How did looking at a problem in a new way help you today? Pick any.
+      <div class="chips" id="chips" style="margin-top:8px"></div>
+    </div>
+    <div class="results popup" id="results"></div>
+    <p class="center" style="margin-top:14px"><button type="button" class="btn ghost small" id="restart">Start again</button></p>
+  </div>
+  <footer class="pagefoot"><span>Understand Percent</span><span class="pno"></span></footer>
+</article>
+
+</div>
+</main>
+
+<nav class="bottom"><div class="nav-inner">
+  <button type="button" class="btn ghost" id="back">◀ Previous page</button>
+  <span class="pageof" id="pageof"></span>
+  <button type="button" class="btn" id="next">Next page ▶</button>
+</div></nav>
+
+<script>
+(function () {
+'use strict';
+var KEY = 'understand-percent-book-v1';
+var CALM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+var HOVER = window.matchMedia && matchMedia('(hover: hover) and (pointer: fine)').matches;
+var COL = {hunds:'#34495e', tens:'#5d6d7e', ones:'#2e86de', tenths:'#119c7f', hund:'#e07b16', thou:'#8e44ad', ink:'#1b2a3a', brand:'#1769aa'};
+var PLACES = [
+  {p:2,  label:'Hun&shy;dreds',    name:'hundreds',    color:COL.hunds},
+  {p:1,  label:'Tens',             name:'tens',        color:COL.tens},
+  {p:0,  label:'Ones',             name:'ones',        color:COL.ones},
+  {p:-1, label:'Tenths',           name:'tenths',      color:COL.tenths},
+  {p:-2, label:'Hun&shy;dredths',  name:'hundredths',  color:COL.hund},
+  {p:-3, label:'Thou&shy;sandths', name:'thousandths', color:COL.thou}
+];
+function placeOf(p){ for (var i=0;i<PLACES.length;i++) if (PLACES[i].p===p) return PLACES[i]; }
+function frac(n,d){ return '<span class="frac"><span>'+n+'</span><span>'+d+'</span></span>'; }
+var TENTH = frac(1,10);
+function pow10(p){ return Math.pow(10,p); }
+function valStr(d,p){ return p>=0 ? (d*pow10(p)).toLocaleString('en-US') : '0.'+new Array(-p).join('0')+d; }
+function denom(p){ return pow10(-p).toLocaleString('en-US'); }
+function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function $(s,r){ return (r||document).querySelector(s); }
+function $$(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
+function capture(el,e){ try { el.setPointerCapture(e.pointerId); } catch (x) {} }
+
+/* ---------- state ---------- */
+var state = {name:'', idx:0, items:{}, reflect:'', mind:[], notes:{}};
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+function load(){ try { var s=JSON.parse(localStorage.getItem(KEY)||'null'); if (s && typeof s==='object' && s.items) { for (var k in state) if (k in s) state[k]=s[k]; } } catch (e) {} }
+function item(id){ return state.items[id] || (state.items[id]={tries:0, first:null, solved:false}); }
+function record(id, ok){
+  var it=item(id); it.tries++; if (it.first===null) it.first=!!ok; if (ok) it.solved=true; save();
+  updateScore(ok && it.first);
+}
+function solved(id){ return !!(state.items[id] && state.items[id].solved); }
+var GRADED=[], TOPIC={};
+function reg(id, el){ if (GRADED.indexOf(id)<0){ GRADED.push(id); var pg=el.closest('.page'); var t=el.closest('.exb'); TOPIC[id]=(t && $('.extitle',t) ? $('.extitle',t).textContent : (pg && $('.sec',pg) ? $('.sec',pg).textContent : '')).trim(); } }
+function updateReveals(){
+  $$('[data-reveal-when]').forEach(function(el){ el.hidden = !el.getAttribute('data-reveal-when').split(/\s+/).every(solved); });
+  if (typeof DEMOS!=='undefined' && DEMOS) DEMOS.forEach(function(d){ d.refresh(); });
+}
+function fb(el, ok, html){ el.className='fb show '+(ok?'ok':'no'); el.innerHTML=html; }
+function updateScore(popIt){
+  var n=GRADED.filter(function(id){ return state.items[id] && state.items[id].first===true; }).length;
+  var s=$('#score'); s.textContent='★ '+n;
+  if (popIt){ s.classList.remove('pop'); void s.offsetWidth; s.classList.add('pop'); }
+}
+
+/* ---------- mascot ---------- */
+var dot=$('#dot'), bubble=$('#bubble'), bubbleT=0;
+var pupils=$$('.pupil', dot);
+window.addEventListener('pointermove', function(e){
+  var r=dot.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
+  var dx=e.clientX-cx, dy=e.clientY-cy, d=Math.hypot(dx,dy)||1, k=Math.min(1,d/120)*2.7;
+  pupils.forEach(function(pp){ pp.setAttribute('cx', (+pp.getAttribute('data-x')+dx/d*k).toFixed(2)); pp.setAttribute('cy', (-3+dy/d*k).toFixed(2)); });
+}, {passive:true});
+setInterval(function(){ dot.classList.add('blink'); setTimeout(function(){ dot.classList.remove('blink'); }, 140); }, 3600);
+function say(msg, mood){
+  bubble.innerHTML=msg; bubble.classList.add('on');
+  clearTimeout(bubbleT); bubbleT=setTimeout(function(){ bubble.classList.remove('on'); }, 4200);
+  dot.classList.remove('cheer','hmm'); void dot.offsetWidth;
+  var mouth=$('#mouth');
+  if (mood==='cheer'){ dot.classList.add('cheer'); mouth.setAttribute('d','M-8 6 Q0 18 8 6 Z'); mouth.setAttribute('fill','#fff'); }
+  else if (mood==='hmm'){ dot.classList.add('hmm'); mouth.setAttribute('d','M-6 10 Q0 7 6 10'); mouth.setAttribute('fill','none'); }
+  else { mouth.setAttribute('d','M-7 8 Q0 15 7 8'); mouth.setAttribute('fill','none'); }
+  if (mood){ setTimeout(function(){ mouth.setAttribute('d','M-7 8 Q0 15 7 8'); mouth.setAttribute('fill','none'); }, 1600); }
+}
+dot.addEventListener('click', function(){ var pg=pages[state.idx]; say(tipOf(pg)); });
+var GOOD=['Great thinking!','You got it!','Super work!','Brilliant!','Yes! Well done!','Nice one!'];
+var RETRY=['You kept trying. Well done!','Got it! Never give up!'];
+var OOPS=['Not yet. Read the hint and try again.','Hmm, look again!','Almost! Check the hint.'];
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+function react(ok, first, el){
+  if (ok){ say(first?pick(GOOD):pick(RETRY),'cheer'); if (el) burst(el); }
+  else say(pick(OOPS),'hmm');
+}
+function burst(el){
+  var r=el.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
+  var cols=[COL.ones,COL.tenths,COL.hund,COL.thou,'#f2b705'];
+  for (var i=0;i<14;i++){
+    var s=document.createElement('span'); s.className='spark';
+    var a=Math.random()*Math.PI*2, d=50+Math.random()*60;
+    s.style.left=cx+'px'; s.style.top=cy+'px'; s.style.background=cols[i%cols.length];
+    s.style.setProperty('--dx',(Math.cos(a)*d).toFixed(0)+'px'); s.style.setProperty('--dy',(Math.sin(a)*d-30).toFixed(0)+'px');
+    document.body.appendChild(s); setTimeout(function(x){ return function(){ x.remove(); }; }(s), 850);
+  }
+}
+
+/* ---------- icons + small art ---------- */
+var ICONS={
+  search:'<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5.5 5.5"/>',
+  grid:'<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 9.3h16M4 14.6h16M9.3 4v16M14.6 4v16"/>',
+  bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.8 10.6c.6.6.8 1.3.8 2.4h6c0-1.1.2-1.8.8-2.4A6 6 0 0 0 12 3z"/>',
+  people:'<circle cx="8" cy="8" r="3"/><circle cx="16.5" cy="9" r="2.6"/><path d="M2.5 20c0-3.3 2.5-6 5.5-6s5.5 2.7 5.5 6M13.5 15.2c.9-.8 1.9-1.2 3-1.2 2.5 0 4.5 2.4 4.5 5.5"/>',
+  pencil:'<path d="M4 20l1-4.5L16 4.5l3.5 3.5L8.5 19z M14 7l3.5 3.5"/>',
+  star:'<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9L12 16.9l-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/>',
+  chat:'<path d="M4 5h16v10H10l-5 4v-4H4z"/><path d="M8 9h8M8 12h5"/>'
+};
+$$('[data-icon]').forEach(function(el){ el.innerHTML='<svg viewBox="0 0 24 24">'+ICONS[el.getAttribute('data-icon')]+'</svg>'; });
+/* ---------- renderers ---------- */
+function sizeOpts(box,n){ box.style.setProperty('--n',n); box.classList.add('n'+n); }
+function renderChoice(el,id,q){
+  el.innerHTML='<p class="prompt">'+q.prompt+'</p><div class="opts'+(q.inline?' inline':'')+'"></div><div class="fb" aria-live="polite"></div>';
+  var box=$('.opts',el), f=$('.fb',el); sizeOpts(box,q.options.length);
+  var btns=q.options.map(function(o,i){
+    var b=document.createElement('button'); b.type='button'; b.className='opt';
+    b.innerHTML=(q.letters?'<span class="letter">'+'ABCDE'.charAt(i)+'</span>':'')+'<span>'+o.t+'</span>';
+    b.addEventListener('click', function(){
+      if (solved(id)) return;
+      record(id,!!o.ok);
+      if (o.ok){ done(); react(true,item(id).first,b); }
+      else { b.classList.add('wrong'); b.disabled=true; fb(f,false,'Not quite. '+(o.why||'Try again.')); react(false); }
+    });
+    box.appendChild(b); return b;
+  });
+  function done(){
+    btns.forEach(function(b,i){ b.disabled=true; if (q.options[i].ok) b.classList.add('correct'); });
+    var bl=$('.blank',el), c=q.options.filter(function(o){ return o.ok; })[0];
+    if (bl){ bl.innerHTML=c.t; bl.classList.add('filled'); }
+    fb(f,true,(item(id).first?'Correct! ':'Yes, that’s it. ')+(q.explain||''));
+    updateReveals();
+  }
+  if (solved(id)) done();
+}
+function renderMulti(el,id,q){
+  el.innerHTML='<p class="prompt">'+q.prompt+'</p><p class="muted small">'+(q.sub||'Choose every answer that fits, then press Check.')+'</p><div class="opts inline"></div><button type="button" class="btn small check">Check</button><div class="fb" aria-live="polite"></div>';
+  var box=$('.opts',el), f=$('.fb',el), chk=$('.check',el), sel={}; sizeOpts(box,q.options.length);
+  var btns=q.options.map(function(o,i){
+    var b=document.createElement('button'); b.type='button'; b.className='opt'; b.innerHTML=o.t; b.setAttribute('aria-pressed','false');
+    b.addEventListener('click', function(){ if (solved(id)) return; sel[i]=!sel[i]; b.classList.toggle('sel',sel[i]); b.setAttribute('aria-pressed',String(!!sel[i])); });
+    box.appendChild(b); return b;
+  });
+  chk.addEventListener('click', function(){
+    if (solved(id)) return;
+    if (!q.options.some(function(o,i){ return sel[i]; })){ fb(f,false,'Pick at least one number first.'); return; }
+    var ok=q.options.every(function(o,i){ return !!o.ok===!!sel[i]; });
+    record(id,ok);
+    if (ok){ done(); react(true,item(id).first,chk); } else { fb(f,false,'Not quite. '+q.hint); react(false); }
+  });
+  function done(){
+    btns.forEach(function(b,i){ b.disabled=true; b.classList.remove('sel'); if (q.options[i].ok) b.classList.add('correct'); });
+    chk.hidden=true; fb(f,true,(item(id).first?'Correct! ':'Yes, that’s it. ')+q.explain); updateReveals();
+  }
+  if (solved(id)) done();
+}
+function renderNum(el,id,q){
+  el.innerHTML='<p class="prompt">'+q.prompt.replace('{input}','<input class="num" type="text" inputmode="decimal" autocomplete="off" aria-label="Your answer">')+'</p><button type="button" class="btn small check">Check</button><div class="fb" aria-live="polite"></div>';
+  var inp=$('input',el), f=$('.fb',el), chk=$('.check',el);
+  function check(){
+    if (solved(id)) return;
+    var raw=inp.value.trim();
+    if (!raw){ fb(f,false,'Type a number first.'); return; }
+    var v=parseFloat(raw.replace(/[^0-9.]/g,''));
+    if (isNaN(v)){ fb(f,false,'Type a number, like 3.5'); return; }
+    var ok=Math.abs(v-q.answer)<1e-9; record(id,ok);
+    if (ok){ done(); react(true,item(id).first,inp); } else { fb(f,false,'Not quite. '+q.hint); react(false); }
+  }
+  chk.addEventListener('click',check);
+  inp.addEventListener('keydown', function(e){ if (e.key==='Enter') check(); });
+  function done(){ inp.value=q.show; inp.disabled=true; inp.classList.add('ok'); chk.hidden=true; fb(f,true,(item(id).first?'Correct! ':'Yes, that’s it. ')+q.explain); updateReveals(); }
+  if (solved(id)) done();
+}
+/* ---------- page 3: 3D base-ten blocks that follow the mouse ---------- */
+function shade(hex,f){
+  var n=parseInt(hex.slice(1),16), rgb=[n>>16,n>>8&255,n&255];
+  return '#'+rgb.map(function(v){ v=Math.round(f>0 ? v+(255-v)*f : v*(1+f)); v=Math.max(0,Math.min(255,v)); return ('0'+v.toString(16)).slice(-2); }).join('');
+}
+var LIGHT=(function(){ var v=[-0.35,0.8,0.5], m=Math.hypot(v[0],v[1],v[2]); return [v[0]/m,v[1]/m,v[2]/m]; })();
+function boxSVG(dims,cx,cy,S,yaw,pitch,color,off,ln){
+  var h=[dims[0]/2,dims[1]/2,dims[2]/2], cyw=Math.cos(yaw), syw=Math.sin(yaw), cp=Math.cos(pitch), sp=Math.sin(pitch), o=off||[0,0,0];
+  // when the model is drawn small, draw grid lines every 10 units instead of every unit, and thinner edges
+  var st=1; while (S*st<3.2) st*=10;
+  var sw=Math.max(0.4,Math.min(1.2,S*0.11)).toFixed(2);
+  function rot(v){ var x=v[0]*cyw+v[2]*syw, z=-v[0]*syw+v[2]*cyw, y=v[1]; return [x, y*cp-z*sp, y*sp+z*cp]; }
+  function P(v){ var r=rot([v[0]+o[0],v[1]+o[1],v[2]+o[2]]); return [(cx+r[0]*S).toFixed(1), (cy-r[1]*S).toFixed(1)]; }
+  var faces=[], a, sg;
+  for (a=0;a<3;a++) for (sg=-1;sg<=1;sg+=2){
+    var nrm=[0,0,0]; nrm[a]=sg; var rn=rot(nrm); if (rn[2]<=0.001) continue;
+    var b=(a+1)%3, c=(a+2)%3;
+    var pt=(function(a,b,c,sg){ return function(u,v){ var q=[0,0,0]; q[a]=sg*h[a]; q[b]=u; q[c]=v; return q; }; })(a,b,c,sg);
+    var corners=[pt(-h[b],-h[c]),pt(h[b],-h[c]),pt(h[b],h[c]),pt(-h[b],h[c])], lines=[], k;
+    var sb=ln?ln[b]:st, sc=ln?ln[c]:st;
+    if (sb>0) for (k=sb;k<dims[b]-1e-6;k+=sb) lines.push([pt(-h[b]+k,-h[c]),pt(-h[b]+k,h[c])]);
+    if (sc>0) for (k=sc;k<dims[c]-1e-6;k+=sc) lines.push([pt(-h[b],-h[c]+k),pt(h[b],-h[c]+k)]);
+    var light=Math.max(0,rn[0]*LIGHT[0]+rn[1]*LIGHT[1]+rn[2]*LIGHT[2]);
+    faces.push({z:rn[2]*h[a], corners:corners, lines:lines, light:light});
+  }
+  faces.sort(function(x,y){ return x.z-y.z; });
+  var s='';
+  faces.forEach(function(f){
+    s+='<polygon points="'+f.corners.map(function(v){ return P(v).join(','); }).join(' ')+'" fill="'+shade(color,(f.light-0.55)*0.9)+'" stroke="'+COL.ink+'" stroke-width="'+sw+'" stroke-linejoin="round"/>';
+    f.lines.forEach(function(l){ var p=P(l[0]), q=P(l[1]); s+='<line x1="'+p[0]+'" y1="'+p[1]+'" x2="'+q[0]+'" y2="'+q[1]+'" stroke="rgba(27,42,58,.32)" stroke-width=".6"/>'; });
+  });
+  return s;
+}
+/* ---------- a 3D model beside every question ----------
+   One small engine draws every model. A scene is a list of boxes (size, centre, colour, group).
+   A model has one or more frames (scenes) with the same number of boxes, so moving from one frame
+   to the next can grow, shrink or slide each box. That is how "× 10" is shown: every block grows
+   ten times along one direction. The mouse turns the model; dragging spins it; pointing at a group
+   lights it up and explains it; clicking a group zooms in on it, so a tiny thousandths cube can
+   still be seen next to a whole cube drawn at true scale. Values that a question asks for show
+   as "?" until that question is answered. */
+var PD={'1':[10,10,100],'0':[10,10,10],'-1':[1,10,10],'-2':[1,1,10],'-3':[1,1,1]};   // block size per place
+var PP={'1':14,'0':14,'-1':2.6,'-2':2.6,'-3':2.6};                                 // spacing in a row
+var PN={'1':['ten','tens'],'0':['cube','cubes'],'-1':['flat','flats'],'-2':['rod','rods'],'-3':['tiny cube','tiny cubes']};
+var PEACH={'1':'10','0':'1 whole','-1':'1 tenth','-2':'1 hundredth','-3':'1 thousandth'};
+var DEMOS=[], DID=0;
+function pname(n,p){ return PN[p][n===1?0:1]; }
+function lerp(a,b,t){ return a+(b-a)*t; }
+function clampN(v,a,b){ return Math.max(a,Math.min(b,v)); }
+function ease(t){ return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2; }
+function mixHex(a,b,t){
+  if (a===b || t<=0) return a; if (t>=1) return b;
+  var x=parseInt(a.slice(1),16), y=parseInt(b.slice(1),16);
+  return '#'+[16,8,0].map(function(s){ return ('0'+Math.round(lerp(x>>s&255,y>>s&255,t)).toString(16)).slice(-2); }).join('');
+}
+function money(n,p){ return 'AED '+(n*pow10(p)).toFixed(2); }
+function val(x,rev){ return typeof x==='function' ? x(rev) : x; }
+// n blocks of place p in a row; whole cubes go in rows of 3 so a number like 5.377 stays compact
+function row(n,p,cx,g){
+  var d=PD[p], out=[], cols=(p===0 && n>3) ? 3 : n, rows=Math.ceil(n/cols), i;
+  for (i=0;i<n;i++){
+    var r=Math.floor(i/cols), k=i%cols, inRow=Math.min(cols, n-r*cols);
+    out.push({d:d.slice(), c:[cx+(k-(inRow-1)/2)*PP[p], d[1]/2, (r-(rows-1)/2)*PP[p]], col:placeOf(p).color, g:g});
+  }
+  return out;
+}
+function rowW(n,p){ return n ? (Math.min(n, (p===0 && n>3) ? 3 : n)-1)*PP[p]+PD[p][0] : 0; }
+function fitCam(bs,W,H,cap){
+  var lo=[1e9,1e9,1e9], hi=[-1e9,-1e9,-1e9], any=false;
+  bs.forEach(function(b){
+    if (b.nofit || Math.min(b.d[0],b.d[1],b.d[2])<0.02) return; any=true;
+    for (var k=0;k<3;k++){ lo[k]=Math.min(lo[k],b.c[k]-b.d[k]/2); hi[k]=Math.max(hi[k],b.c[k]+b.d[k]/2); }
+  });
+  if (!any){ lo=[-5,0,-5]; hi=[5,10,5]; }
+  var dx=hi[0]-lo[0], dy=hi[1]-lo[1], dz=hi[2]-lo[2], hz=Math.hypot(dx,dz)/2, P=0.45;
+  var S=Math.min(W*0.42/Math.max(hz,0.5), H*0.36/Math.max(dy/2*Math.cos(P)+hz*Math.sin(P),0.5), cap||14);
+  return {x:(lo[0]+hi[0])/2, y:(lo[1]+hi[1])/2, z:(lo[2]+hi[2])/2, S:S, hz:hz, fl:lo[1]};
+}
+
+function Demo3D(host, spec){
+  var uid='d3x'+(++DID), W=300, H=210, CX=W/2, CY=H*0.5;
+  host.classList.add('d3','popup');
+  host.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+(spec.aria||'3D model of the percent')+'"><defs>'+
+    '<filter id="'+uid+'g" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="0" stdDeviation="2.6" flood-color="#f2b705" flood-opacity="1"/></filter>'+
+    '<radialGradient id="'+uid+'s"><stop offset="0" stop-color="#0e2a44" stop-opacity=".42"/><stop offset="1" stop-color="#0e2a44" stop-opacity="0"/></radialGradient>'+
+    // blocks may rise a little above the card ("out of the page"), but a zoomed-in model never covers the question
+    '<clipPath id="'+uid+'c"><rect x="-6" y="-26" width="'+(W+12)+'" height="'+(H+30)+'" rx="12"/></clipPath></defs>'+
+    '<g clip-path="url(#'+uid+'c)"><ellipse class="shadow" fill="url(#'+uid+'s)"/><g class="bob"><g class="sc"></g><g class="lb"></g></g></g></svg>'+
+    '<div class="d3cap"></div><div class="d3btns"></div>'+
+    '<div class="d3hint">'+(HOVER?'Move the mouse to turn it · drag to spin':'Slide your finger across it to turn it')+(spec.zoom?(HOVER?' · click blocks to zoom':' · tap blocks to zoom'):'')+'</div>';
+  var svg=$('svg',host), sc=$('.sc',svg), lb=$('.lb',svg), shEl=$('.shadow',svg), capEl=$('.d3cap',host), btnBox=$('.d3btns',host);
+  var frames=spec.frames, cur=spec.start||0, A=null, B=frames[cur].boxes, t=1, t0=0, DUR=CALM?0:(spec.dur||750);
+  var Y0=spec.yaw!=null?spec.yaw:-0.62, P0=spec.pitch!=null?spec.pitch:0.45, yaw=Y0, pitch=P0, tYaw=Y0, tPitch=P0, spin=0;
+  var hov=null, foc=null, raf=0, drawn=false, down=null, lastCap=null;
+  var cam=fitCam(B,W,H,spec.zcap);
+  function isRev(){ return spec.qid ? solved(spec.qid) : true; }
+  var lastRev=isRev();
+  function now(){
+    if (!A || t>=1) return B;
+    var e=ease(t);
+    return B.map(function(b,i){
+      var a=A[i]||{d:[0,0,0], c:b.c, col:b.col};
+      return {d:[lerp(a.d[0],b.d[0],e),lerp(a.d[1],b.d[1],e),lerp(a.d[2],b.d[2],e)], c:[lerp(a.c[0],b.c[0],e),lerp(a.c[1],b.c[1],e),lerp(a.c[2],b.c[2],e)],
+              col:mixHex(a.col,b.col,e), g:b.g, dim:b.dim, under:b.under, nofit:b.nofit, ln:b.ln};
+    });
+  }
+  function camTarget(){
+    var bs=(A && t<0.45) ? A : B, cap=spec.zcap;    // grow first, then the camera follows
+    if (spec.zoom && foc!==null){ bs=B.filter(function(b){ return b.g===foc; }); cap=16; }
+    return fitCam(bs,W,H,cap);
+  }
+  function render(){
+    drawn=true;
+    var bs=now(), rev=isRev(), act=hov!==null?hov:foc, f=frames[cur];
+    var cyw=Math.cos(yaw), syw=Math.sin(yaw), cp=Math.cos(pitch), sp=Math.sin(pitch);
+    function R(v){ var x=v[0]*cyw+v[2]*syw, z=-v[0]*syw+v[2]*cyw, y=v[1]; return [x, y*cp-z*sp, y*sp+z*cp]; }
+    function P(v){ var r=R([v[0]-cam.x, v[1]-cam.y, v[2]-cam.z]); return [CX+r[0]*cam.S, CY-r[1]*cam.S]; }
+    var list=[];
+    bs.forEach(function(b){
+      if (Math.min(b.d[0],b.d[1],b.d[2])<0.02) return;
+      var off=[b.c[0]-cam.x, b.c[1]-cam.y, b.c[2]-cam.z];
+      list.push({b:b, off:off, z:b.under ? -1e9 : R(off)[2]});
+    });
+    list.sort(function(a,b){ return a.z-b.z; });
+    var s='';
+    list.forEach(function(o){
+      var g=o.b.g, on=act!==null && g===act && !spec.noglow, dim=!o.b.under && (act!==null ? (g!==act) : !!o.b.dim);
+      s+='<g data-g="'+g+'"'+(dim?' opacity=".3"':'')+(on?' filter="url(#'+uid+'g)"':'')+'>'+boxSVG(o.b.d,CX,CY,cam.S,yaw,pitch,o.b.col,o.off,o.b.ln)+'</g>';
+    });
+    sc.innerHTML=s;
+    var fp=P([cam.x, cam.fl, cam.z]), rx=cam.hz*cam.S+10;
+    shEl.setAttribute('cx',fp[0].toFixed(1)); shEl.setAttribute('cy',(fp[1]+4).toFixed(1));
+    shEl.setAttribute('rx',rx.toFixed(1)); shEl.setAttribute('ry',(rx*Math.max(0.12,sp)*0.8+3).toFixed(1));
+    var L='';
+    if (t>=1) (f.labels||[]).forEach(function(l){
+      var tx=val(l.t,rev); if (!tx) return;
+      var p=P(l.at), fs=l.fs||15, dim=act!==null ? (l.g!==undefined && l.g!==act) : !!l.dim, pill=l.pill;
+      L+='<g'+(l.g!==undefined?' data-g="'+l.g+'"':'')+(dim?' opacity=".35"':'')+'>';
+      if (pill){ var w=String(tx).length*fs*0.62+12; L+='<rect x="'+(p[0]-w/2).toFixed(1)+'" y="'+(p[1]-fs*0.95).toFixed(1)+'" width="'+w.toFixed(1)+'" height="'+(fs*1.3).toFixed(1)+'" rx="6" fill="'+(pill==='blue'?'#d6eafc':'#fde3c8')+'" stroke="'+(pill==='blue'?'#155a9c':'#a14f06')+'" stroke-width="1.5"/>'; }
+      L+='<text x="'+p[0].toFixed(1)+'" y="'+p[1].toFixed(1)+'" text-anchor="middle" font-size="'+fs+'" font-weight="800" fill="'+(pill==='blue'?'#155a9c':pill==='orange'?'#a14f06':(l.col||COL.ink))+'"'+(pill?'':' stroke="#fff" stroke-width="4" paint-order="stroke"')+'>'+tx+'</text></g>';
+    });
+    lb.innerHTML=L;
+    var c=(act!==null && f.groups && f.groups[act]) ? val(f.groups[act].tip,rev) : val(f.cap,rev);
+    if (c!==lastCap){ capEl.innerHTML=c||''; lastCap=c; }
+  }
+  var lastT=0;
+  function tick(){
+    raf=0;
+    // smoothing is based on elapsed time, so slow tablets and fast screens move at the same speed
+    var tn=performance.now(), dt=clampN(tn-(lastT||tn-16),0,100), go=false;
+    lastT=tn;
+    var k=CALM?1:1-Math.exp(-dt/110), kr=CALM?1:1-Math.exp(-dt/80);
+    if (t<1){ t=DUR ? clampN((tn-t0)/DUR,0,1) : 1; go=true; }
+    var tg=camTarget();
+    ['x','y','z','S','hz','fl'].forEach(function(key){ var d=tg[key]-cam[key]; if (Math.abs(d)>(key==='S'?0.004*tg.S:0.03)) go=true; cam[key]+=d*k; });
+    yaw+=(tYaw-yaw)*kr; pitch+=(tPitch-pitch)*kr;
+    if (Math.abs(tYaw-yaw)>0.002 || Math.abs(tPitch-pitch)>0.002) go=true;
+    render();
+    if (go) raf=requestAnimationFrame(tick); else lastT=0;
+  }
+  function kick(){ if (!raf) raf=requestAnimationFrame(tick); }
+  function goTo(k){
+    k=clampN(k,0,frames.length-1);
+    A=now(); B=frames[k].boxes; cur=k; t=DUR?0:1; t0=performance.now(); foc=null; hov=null;
+    ui(); kick();
+  }
+  function gAt(e){
+    var el=e.target && e.target.closest ? e.target.closest('[data-g]') : null, g=el ? +el.getAttribute('data-g') : NaN;
+    return (isNaN(g) || g<0) ? null : g;
+  }
+  svg.addEventListener('pointermove', function(e){
+    var r=svg.getBoundingClientRect(); if (!r.width) return;
+    var px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/r.height;
+    if (down){
+      spin+=(e.clientX-down.x)*0.012; tPitch=clampN(tPitch+(e.clientY-down.y)*0.006,0.05,1.2); tYaw=Y0+spin;
+      if (Math.hypot(e.clientX-down.sx,e.clientY-down.sy)>6) down.moved=true;
+      down.x=e.clientX; down.y=e.clientY;
+    } else if (e.pointerType==='mouse'){
+      tYaw=Y0+spin+(px-0.5)*1.3; tPitch=clampN(P0+(py-0.5)*0.9,0.05,1.2); hov=gAt(e);
+    }
+    kick();
+  });
+  svg.addEventListener('pointerdown', function(e){ down={x:e.clientX, y:e.clientY, sx:e.clientX, sy:e.clientY, moved:false, g:gAt(e)}; capture(svg,e); });
+  svg.addEventListener('pointerup', function(){ if (!down) return; var d=down; down=null; if (!d.moved){ foc=(d.g===null || d.g===foc) ? null : d.g; kick(); } });
+  svg.addEventListener('pointercancel', function(){ down=null; });
+  svg.addEventListener('pointerleave', function(){ if (down) return; tYaw=Y0+spin; tPitch=P0; hov=null; kick(); });
+  var ctl=spec.controls||{type:'none'}, bEls=[];
+  function btn(fn){ var b=document.createElement('button'); b.type='button'; b.addEventListener('click', fn); btnBox.appendChild(b); return b; }
+  if (ctl.type==='toggle') bEls=[btn(function(){ goTo(1-cur); })];
+  else if (ctl.type==='step'){ bEls=[btn(function(){ goTo(cur-1); }), btn(function(){ goTo(cur+1); })]; bEls[0].innerHTML=ctl.prev||'◀ Left × 10'; bEls[1].innerHTML=ctl.next||'Right ÷ 10 ▶'; }
+  else if (ctl.type==='pick') bEls=frames.map(function(f,k){ return btn(function(){ goTo(k); }); });
+  function ui(){
+    var rev=isRev();
+    if (ctl.type==='toggle') bEls[0].innerHTML=val(frames[cur].btn,rev);
+    else if (ctl.type==='step'){ bEls[0].disabled=cur<=0; bEls[1].disabled=cur>=frames.length-1; }
+    else if (ctl.type==='pick') bEls.forEach(function(b,k){ b.innerHTML=frames[k].name; b.classList.toggle('on',k===cur); b.setAttribute('aria-pressed',String(k===cur)); });
+  }
+  var api={page:host.closest('.page'), el:host, spec:spec,
+    show:function(){ if (!drawn){ ui(); render(); } },
+    refresh:function(){ var r=isRev(); if (r===lastRev) return; lastRev=r; if (drawn){ ui(); lastCap=null; render(); } },
+    replace:function(k,f,go){ frames[k]=f; if (go || k===cur) goTo(go?k:cur); else ui(); },
+    goTo:goTo, frame:function(){ return cur; }};
+  DEMOS.push(api);
+  return api;
+}
+
+/* ---------- model makers ---------- */
+// one block of place p taken apart into its 10 smaller blocks
+function split(p,o){
+  var q=p-1, dp=PD[p], dq=PD[q], ax=dp[0]!==dq[0]?0:dp[1]!==dq[1]?1:2, T=[], Ap=[], labs=[], i;
+  for (i=0;i<10;i++){
+    var c=[0,dp[1]/2,0]; c[ax]+=i-4.5;
+    T.push({d:dq.slice(), c:c, col:placeOf(p).color, g:0});
+    Ap.push({d:dq.slice(), c:[(i-4.5)*2.6, dq[1]/2, 0], col:placeOf(q).color, g:0});
+    labs.push({at:[(i-4.5)*2.6, dq[1]+1.8, 0], t:(function(k){ return function(rev){ return rev ? String(k+1) : ''; }; })(i), col:placeOf(q).color, fs:12});
+  }
+  return {qid:o.qid, controls:{type:'toggle'}, frames:[
+    {boxes:T, btn:'Take it apart ✂', cap:o.capT, groups:[{tip:o.tipT}]},
+    {boxes:Ap, btn:'Put it back together', cap:o.capA, groups:[{tip:o.tipA}], labels:labs}]};
+}
+// n blocks that grow (× 10) or shrink (÷ 10) one place at a time, from place hi down to place lo
+function ladder(n,hi,lo,start,o){
+  o=o||{}; var frames=[], ps=[], p;
+  for (p=hi;p>=lo;p--) ps.push(p);
+  function v(p,rev){ return (rev || !o.given || o.given.indexOf(p)>=0) ? (o.money?money(n,p):valStr(n,p)) : '?'; }
+  function who(p){ return (o.who && o.who[p] ? '<b>'+o.who[p]+'</b>: ' : '')+(o.tag && o.tag[p] ? '<span class="tag '+o.tag[p]+'">'+o.tag[p]+' '+n+'</span> ' : ''); }
+  ps.forEach(function(p){
+    var bs=row(n,p,0,0), back=0;
+    bs.forEach(function(b){ back=Math.min(back, b.c[2]); });      // the value floats above the back row
+    frames.push({boxes:bs,
+      groups:[{tip:who(p)+'<b>'+n+' '+pname(n,p)+'</b>. Each '+PN[p][0]+' is '+(o.money?money(1,p):PEACH[p])+'.'}],
+      labels:[{at:[0,PD[p][1]+3,back], t:function(rev){ return v(p,rev); }, col:placeOf(p).color, fs:20, pill:o.tag && o.tag[p]}],
+      cap:function(rev){
+        var s=who(p)+'<b>'+n+' '+pname(n,p)+'</b> = <b>'+v(p,rev)+'</b>';
+        if (p!==start){
+          var step=p>start?1:-1, ch='<br><span class="chain"><b>'+v(start,rev)+'</b>';
+          for (var q=start+step; step>0?q<=p:q>=p; q+=step) ch+=(step>0?'<i class="up">× 10</i>':'<i class="dn">÷ 10</i>')+'<b>'+v(q,rev)+'</b>';
+          s+=ch+'</span>';
+        } else s+='<br><span class="muted small">Press a button to make each block 10 times bigger or smaller.</span>';
+        return s;
+      }});
+  });
+  return {frames:frames, start:hi-start, qid:o.qid, controls:{type:'step'}};
+}
+// a decimal number shown as groups of blocks, read left to right like the written number
+function parseNum(s){
+  var pi=s.indexOf('.'), out=[]; if (pi<0) pi=s.length;
+  s.split('').forEach(function(ch,i){ if (ch!=='.') out.push({n:+ch||0, ch:ch, p:i<pi?pi-1-i:-(i-pi), i:i}); });
+  return out;
+}
+function attach3D(el,id){
+  var mk=DSPEC[id]; if (!mk) return null;
+  var main=document.createElement('div'), box=document.createElement('div'); main.className='qmain';
+  while (el.firstChild) main.appendChild(el.firstChild);
+  el.appendChild(main); el.appendChild(box); el.classList.add('has3d');
+  return Demo3D(box, mk());
+}
+/* ---------- reading aloud with the device's own voice ---------- */
+var CAN_SPEAK='speechSynthesis' in window && typeof SpeechSynthesisUtterance!=='undefined';
+function speak(text){
+  if (!CAN_SPEAK) return;
+  try { speechSynthesis.cancel(); var u=new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=0.9; speechSynthesis.speak(u); } catch (e) {}
+}
+function fmt(x){ return String(Math.round(x*100)/100); }
+
+/* ---------- colours of the models ---------- */
+var PC={grid:'#2e86de', tenths:'#119c7f', bar:'#e07b16', plate:'#eef3f8', sun:'#f2b705', white:'#dfe7ef',
+        hybrid:'#3d9b48', electric:'#2e86de', gas:'#e07b16'};
+// the sticky-note board on page 1: 4 notes in a row, 5 rows. g = square, s = star, f = smiley face, c = circle
+var BOARD='gsfg'+'fcsc'+'sfgs'+'gsff'+'cfcs';
+var NOTE={g:{col:'#a8d672', name:'square', mark:'■', k:0}, s:{col:'#f7b267', name:'star', mark:'★', k:1},
+          f:{col:'#f4ecdc', name:'smiley face', mark:'☺', k:2}, c:{col:'#ee9fd4', name:'circle', mark:'●', k:3}};
+
+/* ---------- flat pictures inside the questions ----------
+   A grid is shaded one column at a time from the left; a part-column fills from the bottom up,
+   which matches the 3D model (the bottom of the picture is the front of the plate). */
+function gridSVG(n,o){
+  o=o||{}; var P=o.plates||Math.max(1,Math.ceil(n/100)), W=P*140+(P-1)*16, s='', p, c, r, k;
+  for (p=0;p<P;p++){
+    var x0=p*156, m=Math.max(0,Math.min(100,n-100*p));
+    s+='<rect x="'+x0+'" y="1" width="140" height="140" fill="#fff"/>';
+    for (c=0;c<10;c++) for (r=0;r<10;r++) if (c*10+(9-r)<m) s+='<rect x="'+(x0+c*14)+'" y="'+(1+r*14)+'" width="14" height="14" fill="'+(o.col||PC.grid)+'"/>';
+    for (k=1;k<10;k++){
+      s+='<line x1="'+(x0+k*14)+'" y1="1" x2="'+(x0+k*14)+'" y2="141" stroke="#7f95ab" stroke-width="1"/>';
+      if (!o.tenths) s+='<line x1="'+x0+'" y1="'+(1+k*14)+'" x2="'+(x0+140)+'" y2="'+(1+k*14)+'" stroke="#7f95ab" stroke-width="1"/>';
+    }
+    s+='<rect x="'+x0+'" y="1" width="140" height="140" fill="none" stroke="#1b2a3a" stroke-width="2.5"/>';
+  }
+  return '<span class="mini"><svg viewBox="-2 -1 '+(W+4)+' 144" width="'+(W+4)+'" height="144" role="img" aria-label="'+esc(o.aria||'')+'">'+s+'</svg></span>';
+}
+// one or more tape diagrams, one above the other: rows = [{n:parts, k:shaded, lab:'100%'}]
+function barsSVG(rows,aria){
+  var W=280, s='', H=rows.length*58-14;
+  rows.forEach(function(rw,j){
+    var y=1+j*58, w=W/rw.n, i;
+    s+='<rect x="0" y="'+y+'" width="'+W+'" height="44" fill="#fff"/>';
+    for (i=0;i<rw.k;i++) s+='<rect x="'+(i*w).toFixed(2)+'" y="'+y+'" width="'+w.toFixed(2)+'" height="44" fill="'+PC.bar+'"/>';
+    for (i=1;i<rw.n;i++) s+='<line x1="'+(i*w).toFixed(2)+'" y1="'+y+'" x2="'+(i*w).toFixed(2)+'" y2="'+(y+44)+'" stroke="#1b2a3a" stroke-width="1.5"/>';
+    s+='<rect x="0" y="'+y+'" width="'+W+'" height="44" fill="none" stroke="#1b2a3a" stroke-width="2.5"/>';
+    if (rw.lab) s+='<text x="'+(W+10)+'" y="'+(y+29)+'" font-size="18" font-weight="800" fill="#1b2a3a">'+rw.lab+'</text>';
+  });
+  var VW=rows.some(function(r){ return r.lab; }) ? 350 : 284;
+  return '<span class="mini"><svg viewBox="-2 -1 '+VW+' '+(H+4)+'" width="'+VW+'" height="'+(H+4)+'" role="img" aria-label="'+esc(aria)+'">'+s+'</svg></span>';
+}
+function barSVG(n,k,aria){ return barsSVG([{n:n,k:k}],aria); }
+// page 1: the board of 20 sticky notes
+function boardSVG(){
+  var s='<svg class="sheet-art" viewBox="0 0 284 256" role="img" aria-label="A board with 20 sticky notes in 5 rows of 4: 4 green notes with a square, 6 orange notes with a star, 6 cream notes with a smiley face and 4 pink notes with a circle.">'+
+    '<rect x="2" y="2" width="280" height="252" rx="10" fill="#8a5a35" stroke="#5c3a1f" stroke-width="3"/>', i;
+  for (i=0;i<20;i++){
+    var t=NOTE[BOARD[i]], x=14+(i%4)*66, y=14+Math.floor(i/4)*48, mx=x+48, my=y+30;
+    s+='<rect x="'+(x+2)+'" y="'+(y+3)+'" width="58" height="40" fill="rgba(0,0,0,.25)"/><rect x="'+x+'" y="'+y+'" width="58" height="40" fill="'+t.col+'"/>';
+    if (BOARD[i]==='g') s+='<rect x="'+(mx-4)+'" y="'+(my-4)+'" width="8" height="8" fill="#3b4cc0"/>';
+    else if (BOARD[i]==='c') s+='<circle cx="'+mx+'" cy="'+my+'" r="4.5" fill="#3b4cc0"/>';
+    else if (BOARD[i]==='f') s+='<circle cx="'+mx+'" cy="'+my+'" r="5.5" fill="none" stroke="#3b4cc0" stroke-width="1.4"/><circle cx="'+(mx-2)+'" cy="'+(my-1.5)+'" r=".9" fill="#3b4cc0"/><circle cx="'+(mx+2)+'" cy="'+(my-1.5)+'" r=".9" fill="#3b4cc0"/><path d="M'+(mx-2.6)+' '+(my+1.4)+'q2.6 2.4 5.2 0" stroke="#3b4cc0" stroke-width="1.1" fill="none"/>';
+    else { var pts=[], k; for (k=0;k<10;k++){ var a=-Math.PI/2+k*Math.PI/5, rr=k%2?2.6:6; pts.push((mx+rr*Math.cos(a)).toFixed(1)+','+(my+rr*Math.sin(a)).toFixed(1)); } s+='<polygon points="'+pts.join(' ')+'" fill="#3b4cc0"/>'; }
+  }
+  return s+'</svg>';
+}
+
+/* ---------- question bank: the book's problems and numbers, written for the screen ---------- */
+var Q={
+  s1a:{inline:1, prompt:'How many sticky notes are on the board?', options:[
+    {t:'16',why:'Count the rows too: there are 5 rows of 4 notes.'},{t:'20',ok:1},{t:'24',why:'Count again: 5 rows of 4 notes.'}],
+    explain:'5 rows of 4 notes = <b>20</b> notes.'},
+  s1b:{inline:1, prompt:'How many notes have a <b>star</b>?', options:[
+    {t:'4',why:'4 notes have a square, and 4 have a circle. Count the stars again.'},{t:'6',ok:1},{t:'8',why:'Count only the notes with a star.'}],
+    explain:'<b>6</b> of the 20 notes have a star.'},
+  s1c:{letters:1, prompt:'Which ratio compares the notes with a star to <b>all</b> the notes?', options:[
+    {t:frac(6,20),ok:1},{t:frac(6,14),why:'14 is the number of notes <b>without</b> a star. Compare with all the notes.'},{t:frac(20,6),why:'The numbers are the wrong way round. Stars first, then all the notes.'}],
+    explain:'6 out of 20 = '+frac(6,20)+'. Today you will see that this is the same as 30 out of 100: <b>30%</b>.'},
+  m1:{type:'num', prompt:'How many students out of every <b>100</b> voted for the tiger? {input}', answer:40, show:'40',
+    hint:'4 out of 10 is the same as how many out of 100? 10 × 10 = 100, so multiply the 4 by 10 too.', explain:frac(4,10)+' = '+frac(40,100)+'. <b>40</b> out of every 100 voters chose the tiger: that is <b>40%</b>.'},
+  m2:{type:'num', prompt:'What percent of each model is <b>not</b> shaded? {input}%', answer:60, show:'60',
+    hint:'The whole grid is 100%, and 40% is shaded. How much is left?', explain:'6 of the 10 strips, or 60 of the 100 squares, are not shaded: '+frac(6,10)+' = '+frac(60,100)+' = <b>60%</b>.'},
+  m3:{prompt:'The results also show that <b>23 out of every 100</b> voters chose the eagle. Which model shows 23 out of 100 more easily?', options:[
+    {t:'the hundredths grid',ok:1},{t:'the tenths grid',why:'Each strip of a tenths grid is 10%. 23% would need 2 strips and part of another strip.'}],
+    explain:'On a hundredths grid you can shade exactly 23 squares: 2 columns and 3 more squares.'},
+  k1:{type:'num', prompt:'What percent of the grey kitten’s weight does the orange kitten weigh? {input}%', answer:150, show:'150',
+    hint:'The grey kitten is one whole bar: 100%. 1.5 times as much is one whole bar and half of another bar.', explain:'100% + 50% = <b>150%</b>. The orange kitten weighs more than one whole grey kitten.'},
+  k2:{type:'num', prompt:'Another way: how many ounces does the orange kitten weigh? {input} ounces', answer:6, show:'6',
+    hint:'The orange kitten weighs 1.5 times as much as 4 ounces: 1.5 × 4 = ?', explain:'1.5 × 4 = <b>6</b> ounces. Then '+frac(6,4)+' = '+frac(150,100)+' = 150%.'},
+  k3:{type:'num', prompt:'Look at both bars together. What percent of the whole diagram is <b>not</b> shaded? {input}%', answer:25, show:'25',
+    hint:'Both bars together have 20 equal parts. 5 of them are not shaded. 5 out of 20 is the same as 1 out of 4.', explain:frac(5,20)+' = '+frac(1,4)+' = '+frac(25,100)+' = <b>25%</b>. (Half of the bottom bar is not shaded, but the whole diagram has 2 bars.)'},
+  c0:{type:'num', prompt:'What percent of the cars sold were <b>gas-powered</b>? {input}%', answer:74, show:'74',
+    hint:'74 of the 100 cars sold were gas-powered.', explain:'74 out of 100 = <b>74%</b>. The others were 8% hybrid and 18% all-electric.'},
+  c1:{type:'num', prompt:'The new order keeps the same percents. How many <b>hybrid</b> cars should the owner order? {input}', answer:4, show:'4',
+    hint:'8% of the cars were hybrid. 50 cars is half of 100 cars, so the order needs half of 8.', explain:'8 out of 100 = 4 out of 50. Order <b>4</b> hybrid cars.'},
+  c2:{type:'num', prompt:'How many <b>all-electric</b> cars? {input}', answer:9, show:'9',
+    hint:'18% of the cars were all-electric. Half of 18 is ?', explain:'18 out of 100 = 9 out of 50. Order <b>9</b> all-electric cars.'},
+  c3:{type:'num', prompt:'How many <b>gas-powered</b> cars? {input}', answer:37, show:'37',
+    hint:'74% of the cars were gas-powered. Half of 74 is ?', explain:'74 out of 100 = 37 out of 50. Order <b>37</b> gas-powered cars. Check: 4 + 9 + 37 = 50 cars.'},
+  q1:{type:'num', prompt:barSVG(10,3,'A tape diagram in 10 equal parts. 3 parts are shaded.')+'What percent does the model show? {input}%', answer:30, show:'30',
+    hint:'The bar has 10 equal parts, so each part is 10%.', explain:'3 parts × 10% = <b>30%</b>.'},
+  q2:{type:'num', prompt:gridSVG(52,{aria:'A hundredths grid. 5 columns and 2 more squares are shaded.'})+'What percent does the model show? {input}%', answer:52, show:'52',
+    hint:'Count the full columns first (10% each), then the single squares (1% each).', explain:'5 columns + 2 squares = 50% + 2% = <b>52%</b>.'},
+  q3:{type:'num', prompt:barSVG(10,7,'A tape diagram in 10 equal parts. 7 parts are shaded.')+frac(7,10)+' = '+frac('?',100)+' = {input}%', answer:70, show:'70',
+    hint:'10 × 10 = 100, so each part is worth 10 out of 100.', explain:frac(7,10)+' = '+frac(70,100)+' = <b>70%</b>.'},
+  q4:{type:'num', prompt:barsSVG([{n:10,k:10},{n:10,k:2}],'Two tape diagrams of 10 equal parts. The first is fully shaded. The second has 2 parts shaded.')+frac(12,10)+' = '+frac('?',100)+' = {input}%', answer:120, show:'120',
+    hint:'One whole bar of 10 parts is 100%. Each part is 10%. There are 12 shaded parts.', explain:frac(12,10)+' = '+frac(120,100)+' = <b>120%</b>: one whole and 20% more.'},
+  q5:{type:'num', prompt:gridSVG(35,{aria:'A hundredths grid. 3 columns and 5 more squares are shaded.'})+frac('?',100)+' = {input}%', answer:35, show:'35',
+    hint:'3 full columns are 30 squares. Then count the single squares.', explain:frac(35,100)+' = <b>35%</b>.'},
+  q6:{type:'num', prompt:gridSVG(184,{aria:'Two hundredths grids. The first is fully shaded. On the second, 8 columns and 4 more squares are shaded.'})+frac('?',100)+' = {input}%', answer:184, show:'184',
+    hint:'The first grid is 100 squares. On the second grid, count the columns (10 each), then the single squares.', explain:'100 + 84 = 184, so '+frac(184,100)+' = <b>184%</b>.'},
+  w1:{type:'num', prompt:'What percent of the students had tried the new restaurant? {input}%', answer:20, show:'20',
+    hint:'2 out of 10 = ? out of 100. Multiply both numbers by 10.', explain:frac(2,10)+' = '+frac(20,100)+' = <b>20%</b>.'},
+  w2:{type:'num', prompt:'What percent of the cars are <b>not</b> white? {input}%', answer:30, show:'30',
+    hint:'If 7 out of every 10 cars are white, then 3 out of every 10 are not white.', explain:frac(3,10)+' = '+frac(30,100)+' = <b>30%</b>. 70% + 30% = 100%.'},
+  w3:{type:'num', prompt:'What percent of the small popcorn’s size is the medium popcorn? {input}%', answer:170, show:'170',
+    hint:'The small popcorn is the whole: 100%. 1.7 times is 1 whole and 7 tenths more.', explain:'1.7 × 100% = <b>170%</b>.'},
+  w4:{type:'num', prompt:'Write a percent that compares the length of a mako shark with the length of a blacktip shark. {input}%', answer:200, show:'200',
+    hint:'The blacktip is the whole: 100%. The mako is 2 times as long.', explain:'2 × 100% = <b>200%</b>. (6<span class="frac"><span>1</span><span>2</span></span> × 2 = 13 feet.)'},
+  f10:{type:'num', prompt:'What percent are this week’s sales compared with last week’s sales? {input}%', answer:130, show:'130',
+    hint:'Last week is one whole grid: 100%. 1.3 times is one whole grid and 3 columns of another.', explain:'100% + 30% = <b>130%</b>.'},
+  f11:{prompt:'Did Sofia sell more or less than 30% of last week’s sales this week?', options:[
+    {t:'more than 30%',ok:1},{t:'less than 30%',why:'Look at the grids: this week is a whole grid and 30 more squares.'},{t:'exactly 30%',why:'30% is only the extra part. Add the whole grid too.'}],
+    explain:'130% = 100% + 30%. She sold <b>more</b>: all of last week’s amount, and 30% more.'},
+  a1:{inline:1, prompt:'Is Andrew right?', options:[{t:'Yes',why:'Try his rule on 4 out of 10. Is it 4%?'},{t:'No',ok:1}],
+    explain:'His rule only works when the number is already out of 100.'},
+  a2:{prompt:'Which example shows that Andrew’s rule does <b>not</b> always work?', options:[
+    {t:'4 out of 10 is 40%, not 4%',ok:1},{t:'40 out of 100 is 40%',why:'That one follows his rule, because it is already out of 100.'},{t:'1 out of 100 is 1%',why:'That one follows his rule, because it is already out of 100.'}],
+    explain:'A percent always compares with 100. 4 out of 10 = 40 out of 100 = 40%.'},
+  z2:{type:'num', prompt:barsSVG([{n:5,k:5,lab:'100%'},{n:5,k:2}],'Two tape diagrams of 5 equal parts. The top bar is fully shaded and is 100%. The bottom bar has 2 parts shaded.')+'What percent does the bottom bar show? {input}%', answer:40, show:'40',
+    hint:'The top bar of 5 equal parts is 100%, so each part is 100 ÷ 5 = 20%.', explain:'2 parts × 20% = <b>40%</b>.'},
+  z3:{type:'num', prompt:'What percent of the students live more than 2 miles from school? {input}%', answer:30, show:'30',
+    hint:'3 out of 10 = ? out of 100.', explain:frac(3,10)+' = '+frac(30,100)+' = <b>30%</b>.'},
+  z4:{letters:1, prompt:'The vanilla sales are what percent of the strawberry sales?', options:[
+    {t:'0.27%',why:'That is far less than 1%. Vanilla sells <b>more</b> than strawberry.'},{t:'2.7%',why:'2.7% is a tiny part. Vanilla sells 2.7 <b>times</b> as many.'},
+    {t:'27%',why:'27% is less than one whole, but vanilla sells more than strawberry.'},{t:'270%',ok:1}],
+    explain:'2.7 times as many = 2.7 × 100% = <b>270%</b>.'},
+  z5a:{inline:1, prompt:'Is Steve correct?', options:[{t:'Yes',why:'40% means 40 out of 100. Is 4 out of 5 the same as 40 out of 100?'},{t:'No',ok:1}],
+    explain:'Steve may have multiplied the 4 by 10. But the whole is 5, not 10.'},
+  z5b:{type:'num', prompt:'What percent of the people said they would travel by train more often? {input}%', answer:80, show:'80',
+    hint:'Make the whole 100: 5 × 20 = 100, so multiply the 4 by 20 too.', explain:frac('4 × 20','5 × 20')+' = '+frac(80,100)+' = <b>80%</b>.'}
+};
+// the shading-grid tasks; they are graded like questions
+var GRIDS={
+  sg1:{tasks:[{id:'g1', target:40, what:'the tiger votes', hint:'40% is 40 squares: 4 whole columns. Try the <b>10%</b> tool.', explain:'4 columns × 10% = <b>40%</b>: 40 out of 100.'},
+              {id:'g2', target:23, what:'the eagle votes', hint:'23% is 2 whole columns (20%) and 3 single squares (3%). Use both tools.', explain:'2 columns + 3 squares = 20% + 3% = <b>23%</b>.'}]},
+  sg2:{plates:2, tasks:[{id:'g3', target:130, what:'this week’s sales', hint:'Last week is one whole grid: 100%. Shade one whole grid, then 3 columns of the second grid.', explain:'One whole grid (100%) + 3 columns (30%) = <b>130%</b>.'}]},
+  sg3:{tasks:[{id:'g4', target:83, what:'On the last test, 83% of the class earned an A', hint:'83% is 8 whole columns (80%) and 3 single squares (3%).', explain:'8 columns + 3 squares = 80% + 3% = <b>83%</b>.'},
+              {id:'g5', target:54, what:'', hint:'54% is 5 whole columns (50%) and 4 single squares (4%).', explain:'5 columns + 4 squares = 50% + 4% = <b>54%</b>.'},
+              {id:'g6', target:17, what:'', hint:'17% is 1 whole column (10%) and 7 single squares (7%).', explain:'1 column + 7 squares = 10% + 7% = <b>17%</b>.'},
+              {id:'g7', target:62, what:'', hint:'62% is 6 whole columns (60%) and 2 single squares (2%).', explain:'6 columns + 2 squares = 60% + 2% = <b>62%</b>.'}]}
+};
+
+/* ---------- 3D models for this lesson ----------
+   A plate is a 10 x 10 base with the shaded part raised on top. The base draws its own grid lines
+   (a tenths grid draws strips only). The shaded part is ten column boxes, so any two grids have the
+   same number of boxes and can morph into each other; a part-column fills from the front.
+   A tape diagram is a base cut into equal parts, with each shaded part raised. */
+var GH=1;   // how far a shaded square rises above the plate
+function plateBoxes(n,x0,o){
+  o=o||{}; var k=Math.floor(n/10), r=n%10, col=o.col||PC.grid, ln=o.tenths?[1,0,0]:null, c, len;
+  var out=[{d:o.off?[0,0,0]:[10,0.4,10], c:[x0+5,0.2,0], col:PC.plate, g:-1, under:1, ln:ln}];
+  for (c=0;c<10;c++){
+    len=o.off ? 0 : (c<k ? 10 : c===k ? r : 0);
+    out.push({d:len?[1,GH,len]:[0,0,0], c:[x0+c+0.5, 0.4+GH/2, 5-len/2], col:col, g:0, ln:ln});
+  }
+  if (o.rest) for (c=0;c<10;c++){
+    len=o.off ? 0 : (c<k ? 0 : c===k ? 10-r : 10);
+    out.push({d:len?[1,0.5,len]:[0,0,0], c:[x0+c+0.5, 0.65, -5+len/2], col:o.rest, g:1, ln:ln});
+  }
+  return out;
+}
+// n percent on one or more plates side by side (100 per plate)
+function gridFrame(n,o){
+  o=o||{}; var P=o.plates||Math.max(1,Math.ceil(n/100)), boxes=[], labels=[], i;
+  for (i=0;i<P;i++){
+    var m=Math.max(0,Math.min(100,n-100*i)), on=i===0 || n>100*i || !!o.all, x0=i*11.5;
+    boxes=boxes.concat(plateBoxes(m,x0,{col:o.col, tenths:o.tenths, off:!on, rest:o.rest}));
+    if (on && o.lab) labels.push({at:[x0+5,0,8.4], t:o.lab(m,i), fs:16, col:COL.ink});
+  }
+  return {boxes:boxes, labels:labels, groups:o.tips||[{tip:o.tip}], cap:o.cap, btn:o.btn, name:o.name};
+}
+// tape diagrams one behind the other: rows = [{n:parts, sh:shaded (a number, or a list of true/false), lab, tip, off, col}]
+function bars(rows,o){
+  o=o||{}; var R=rows.length, boxes=[], labels=[];
+  rows.forEach(function(rw,j){
+    var z=(j-(R-1)/2)*3.6, w=10/rw.n, i;
+    boxes.push({d:rw.off?[0,0,0]:[10,0.4,2.4], c:[0,0.2,z], col:PC.plate, g:-1, under:1, ln:[w,0,0]});
+    for (i=0;i<20;i++){
+      var on=!rw.off && i<rw.n && (Array.isArray(rw.sh) ? !!rw.sh[i] : i<rw.sh);
+      boxes.push({d:on?[w,GH,2.4]:[0,0,0], c:[-5+(Math.min(i,rw.n-1)+0.5)*w, 0.4+GH/2, z], col:rw.col||o.col||PC.bar, g:j, ln:[w,0,0]});
+    }
+    if (!rw.off && rw.lab) labels.push({at:[R>1?8.2:0, 0.4, R>1?z:3.6], t:rw.lab, fs:15, col:COL.ink});
+  });
+  return {boxes:boxes, labels:labels, groups:rows.map(function(r){ return {tip:r.tip}; }), cap:o.cap, btn:o.btn, name:o.name};
+}
+function barFrame(n,sh,o){ o=o||{}; return bars([{n:n, sh:sh, lab:o.lab, tip:o.tip, col:o.col}], o); }
+// page 1: the board of sticky notes; hl = the kind of note to pick out
+function notesFrame(hl,o){
+  o=o||{}; var boxes=[{d:[11.6,0.5,11],c:[0,0.25,0],col:'#8a5a35',g:-1,under:1,ln:[0,0,0]}], labels=[], i;
+  for (i=0;i<20;i++){
+    var t=NOTE[BOARD[i]], x=((i%4)-1.5)*2.8, z=(Math.floor(i/4)-2)*2.1, up=hl===BOARD[i];
+    boxes.push({d:[2.5,0.25,1.75], c:[x,0.5+0.125+(up?0.9:0),z], col:t.col, g:t.k, dim:!!hl && !up, ln:[0,0,0]});
+    labels.push({at:[x+0.75,0.75+(up?0.9:0),z+0.45], t:t.mark, fs:11, col:'#3b4cc0', g:t.k, dim:!!hl && !up});
+  }
+  return {boxes:boxes, labels:labels, cap:o.cap,
+    groups:['g','s','f','c'].map(function(ch){ var n=BOARD.split(ch).length-1; return {tip:'<b>'+n+'</b> notes with a '+NOTE[ch].name+' '+NOTE[ch].mark}; })};
+}
+// page 4: 100 cars as a hundredths grid in three colours
+function carsFrame(o){
+  var boxes=[{d:[10,0.4,10], c:[0,0.2,0], col:PC.plate, g:-1, under:1}], i, cut=[8,26];
+  for (i=0;i<100;i++){
+    var c=Math.floor(i/10), r=9-i%10, g=i<cut[0]?0:i<cut[1]?1:2;
+    boxes.push({d:[1,GH,1], c:[c-4.5, 0.4+GH/2, r-4.5], col:[PC.hybrid,PC.electric,PC.gas][g], g:g});
+  }
+  return {boxes:boxes, labels:[], cap:o.cap, groups:[{tip:'<b>8</b> hybrid cars: 8%'},{tip:'<b>18</b> all-electric cars: 18%'},{tip:'<b>74</b> gas-powered cars: 74%'}]};
+}
+// every frame of one model gets the same number of boxes, so the model can morph between them
+function same(frames){
+  var N=0; frames.forEach(function(f){ N=Math.max(N,f.boxes.length); });
+  frames.forEach(function(f){ while (f.boxes.length<N) f.boxes.push({d:[0,0,0], c:[0,0.5,0], col:PC.plate, g:-1}); });
+  return frames;
+}
+function hid(a,b){ return function(rev){ return rev ? a : b; }; }
+function pctLab(m){ return function(rev){ return rev ? m+'%' : '?'; }; }
+function showLab(m){ return m+'%'; }
+function S1(qid,fr,o){
+  o=o||{}; var frames=fr.boxes ? [fr] : same(fr);
+  return {qid:qid, pitch:o.pitch!=null?o.pitch:0.75, frames:frames, controls:o.controls, start:o.start, aria:'3D model of the percent'};
+}
+var CARCAP='100 cars sold: <span style="color:'+PC.hybrid+'">■</span> hybrid, <span style="color:'+PC.electric+'">■</span> all-electric, <span style="color:'+PC.gas+'">■</span> gas-powered. Point at a colour.';
+var DSPEC={
+  s1a:function(){ return S1('s1a', notesFrame(null,{cap:hid('5 rows of 4 = <b>20</b> notes','Turn the board. How many notes are there?')}), {pitch:0.8}); },
+  s1b:function(){ return S1('s1b', notesFrame('s',{cap:hid('<b>6</b> notes have a star.','The notes with a star stand up. Count them.')}), {pitch:0.8}); },
+  s1c:function(){ return S1('s1c', notesFrame('s',{cap:hid('6 stars out of 20 notes = '+frac(6,20),'Stars compared with all the notes.')}), {pitch:0.8}); },
+  m1:function(){ return S1('m1', [
+    gridFrame(40,{tenths:1, col:PC.tenths, btn:'Show hundredths ▶', tip:'4 strips', cap:'Tenths grid: 4 out of 10 strips. Each strip is 10 squares of a hundredths grid.'}),
+    gridFrame(40,{btn:'◀ Show tenths', tip:'The tiger votes', cap:hid('Hundredths grid: <b>40</b> out of 100 squares = 40%','Hundredths grid: how many of the 100 squares are raised?')})], {controls:{type:'toggle'}}); },
+  m2:function(){ return S1('m2', gridFrame(40,{rest:PC.sun, tips:[{tip:'Shaded: the tiger votes'},{tip:'Not shaded'}], cap:hid('60 of 100 squares are not shaded: <b>60%</b>','Blue: shaded. Yellow: not shaded.')})); },
+  m3:function(){ return S1('m3', [
+    gridFrame(23,{name:'Hundredths grid', tip:'23 squares', cap:'Hundredths grid: exactly 23 squares.'}),
+    gridFrame(20,{tenths:1, col:PC.tenths, name:'Tenths grid', tip:'2 strips', cap:'Tenths grid: 2 strips is 20%, 3 strips is 30%. 23% is in between.'})], {controls:{type:'pick'}}); },
+  k1:function(){ return S1('k1', [
+    bars([{n:10, sh:10, lab:'100%', tip:'Grey kitten: 4 ounces'},{n:10, sh:5, off:1}],{btn:'Add the orange kitten ▶', cap:'Grey kitten: one whole bar of 10 parts = <b>100%</b>. Each part is 10%.'}),
+    bars([{n:10, sh:10, lab:'100%', tip:'One whole: 100%'},{n:10, sh:5, lab:hid('50%','?'), tip:'Half of another bar'}],{btn:'◀ Grey kitten only', cap:hid('100% + 50% = <b>150%</b>','Orange kitten: 1.5 bars. What percent is that?')})], {controls:{type:'toggle'}, pitch:0.65}); },
+  k2:function(){ return S1('k2', bars([{n:10, sh:10, lab:'4 oz', tip:'1 × 4 ounces'},{n:10, sh:5, lab:'2 oz', tip:'0.5 × 4 ounces'}],{cap:hid('4 + 2 = <b>6</b> ounces','One whole bar is 4 ounces. Half a bar is 2 ounces.')}), {pitch:0.65}); },
+  k3:function(){ return S1('k3', bars([{n:10, sh:10, tip:'10 shaded parts'},{n:10, sh:5, tip:'5 shaded parts and 5 not shaded'}],{cap:hid('5 of 20 parts not shaded = <b>25%</b>','Count every part of both bars: 20 parts.')}), {pitch:0.65}); },
+  c0:function(){ return S1('c0', carsFrame({cap:CARCAP}), {pitch:0.8}); },
+  c1:function(){ return S1('c1', carsFrame({cap:hid('8% of 50 cars = <b>4</b> cars',CARCAP)}), {pitch:0.8}); },
+  c2:function(){ return S1('c2', carsFrame({cap:hid('18% of 50 cars = <b>9</b> cars',CARCAP)}), {pitch:0.8}); },
+  c3:function(){ return S1('c3', carsFrame({cap:hid('74% of 50 cars = <b>37</b> cars',CARCAP)}), {pitch:0.8}); },
+  q1:function(){ return S1('q1', barFrame(10,3,{lab:hid('each part = 10%','each part = ?'), tip:'3 shaded parts', cap:hid('3 × 10% = <b>30%</b>','10 equal parts make 100%.')}), {pitch:0.6}); },
+  q2:function(){ return S1('q2', gridFrame(52,{tip:'The shaded squares', cap:hid('5 columns + 2 squares = <b>52%</b>','Turn it and count: columns first, then single squares.')})); },
+  q3:function(){ return S1('q3', barFrame(10,7,{lab:hid('each part = 10%','each part = ?'), tip:'7 shaded parts', cap:hid(frac(7,10)+' = '+frac(70,100)+' = <b>70%</b>','10 equal parts make 100%.')}), {pitch:0.6}); },
+  q4:function(){ return S1('q4', bars([{n:10, sh:10, lab:'100%', tip:'One whole: 10 parts'},{n:10, sh:2, lab:hid('20%','?'), tip:'2 more parts'}],{cap:hid(frac(12,10)+' = '+frac(120,100)+' = <b>120%</b>','One whole bar is 100%. Each part is 10%.')}), {pitch:0.65}); },
+  q5:function(){ return S1('q5', gridFrame(35,{tip:'The shaded squares', cap:hid('3 columns + 5 squares = <b>35%</b>','Count the columns, then the single squares.')})); },
+  q6:function(){ return S1('q6', gridFrame(184,{lab:pctLab, tip:'The shaded squares', cap:hid('100 + 84 = <b>184%</b>','Each grid is one whole: 100 squares.')}), {pitch:0.7}); },
+  w1:function(){ return S1('w1', gridFrame(20,{tenths:1, col:PC.tenths, tip:'Tried the restaurant', cap:hid('2 of 10 strips = <b>20%</b>','Each strip is 1 student out of 10.')})); },
+  w2:function(){ return S1('w2', gridFrame(70,{tenths:1, col:PC.white, rest:PC.bar, tips:[{tip:'White cars: 7 out of 10'},{tip:'Cars that are not white'}], cap:hid('3 of 10 strips = <b>30%</b> are not white','The light strips are the white cars. The orange strips are the other cars.')})); },
+  w3:function(){ return S1('w3', gridFrame(170,{lab:pctLab, tip:'Medium popcorn', cap:hid('100% + 70% = <b>170%</b>','The small popcorn is one whole grid.')}), {pitch:0.7}); },
+  w4:function(){ return S1('w4', gridFrame(200,{lab:pctLab, tip:'Mako shark', cap:hid('100% + 100% = <b>200%</b>','The blacktip shark is one whole grid.')}), {pitch:0.7}); },
+  f10:function(){ return S1('f10', gridFrame(130,{lab:pctLab, tip:'This week’s sales', cap:hid('100% + 30% = <b>130%</b>','Last week’s sales are one whole grid.')}), {pitch:0.7}); },
+  f11:function(){ return S1('f11', gridFrame(130,{lab:showLab, tip:'This week’s sales', cap:'One whole grid (100%) and 30 more squares (30%).'}), {pitch:0.7}); },
+  a1:function(){ return S1('a1', barFrame(10,4,{tip:'4 out of 10', cap:'4 out of 10, as a tape diagram. Is this 4%?'}), {pitch:0.6}); },
+  a2:function(){ return S1('a2', [
+    gridFrame(4,{name:'4%', tip:'4 squares', cap:'4% is only 4 squares out of 100.'}),
+    gridFrame(40,{name:'4 out of 10', tip:'4 columns', cap:'4 out of 10 = 40 out of 100 = <b>40%</b>.'})], {controls:{type:'pick'}}); },
+  z2:function(){ return S1('z2', bars([{n:5, sh:5, lab:'100%', tip:'5 parts: 100%'},{n:5, sh:2, lab:hid('40%','?'), tip:'2 parts'}],{cap:hid('2 × 20% = <b>40%</b>','The top bar is 100%. What is each part worth?')}), {pitch:0.65}); },
+  z3:function(){ return S1('z3', gridFrame(30,{tenths:1, col:PC.tenths, tip:'More than 2 miles away', cap:hid('3 of 10 strips = <b>30%</b>','Each strip is 1 student out of 10.')})); },
+  z4:function(){ return S1('z4', gridFrame(270,{lab:pctLab, tip:'Vanilla sales', cap:hid('100% + 100% + 70% = <b>270%</b>','Strawberry sales are one whole grid.')}), {pitch:0.7}); },
+  z5a:function(){ return S1('z5a', barFrame(5,4,{tip:'4 out of 5', cap:'4 out of 5, as a tape diagram. Almost all of it is shaded. Can it be 40%?'}), {pitch:0.6}); },
+  z5b:function(){ return S1('z5b', barFrame(5,4,{lab:hid('each part = 20%','each part = ?'), tip:'4 out of 5', cap:hid('4 × 20% = <b>80%</b>','5 equal parts make 100%.')}), {pitch:0.6}); }
+};
+
+/* ---------- page 1: a hundredths plate whose columns rise one at a time ---------- */
+function setupHero(){
+  var svg=$('#heroSvg'), mx=0, my=0, t0=performance.now(), raf=0, last=0, on=false;
+  window.addEventListener('pointermove', function(e){ mx=e.clientX/window.innerWidth-0.5; my=e.clientY/window.innerHeight-0.5; }, {passive:true});
+  function draw(t){
+    var yaw=-0.7+Math.sin(t*0.4)*0.3+mx*1.0, pitch=Math.max(0.4,Math.min(1.0,0.7+my*0.6));
+    var step=t/0.9+3, k=1+Math.floor(step)%10, rise=Math.min(1,(step%1)*3), s;
+    s=boxSVG([10,0.6,10],150,172,12,yaw,pitch,PC.plate,[0,-0.3,0]);
+    if (k>1) s+=boxSVG([k-1,1.4,10],150,172,12,yaw,pitch,COL.ones,[-5+(k-1)/2,0.7,0]);
+    s+=boxSVG([1,1.4,10],150,172,12,yaw,pitch,COL.ones,[-5+k-0.5,0.7+(1-ease(rise))*6,0]);
+    s+='<text x="150" y="52" text-anchor="middle" font-size="46" font-weight="800" fill="'+COL.brand+'" stroke="#fff" stroke-width="7" paint-order="stroke">'+(k*10)+'%</text>';
+    svg.innerHTML=s;
+  }
+  function frame(now){
+    if (!on){ raf=0; return; }
+    raf=requestAnimationFrame(frame);
+    if (now-last<33) return;
+    last=now; draw((now-t0)/1000);
+  }
+  draw(0);
+  return {active:function(a){ on=!!a && !document.hidden && !CALM; if (on && !raf) raf=requestAnimationFrame(frame); }};
+}
+
+/* ---------- pages 2, 6 and 7: hundredths grids to shade, with a 3D copy that follows them ---------- */
+function cellFrame(on,P){
+  var n=on.filter(Boolean).length, boxes=[], p;
+  for (p=0;p<P;p++) boxes.push({d:[10,0.4,10], c:[p*11.5,0.2,0], col:PC.plate, g:-1, under:1});
+  on.forEach(function(v,i){ var p=Math.floor(i/100), j=i%100, r=Math.floor(j/10), c=j%10; boxes.push({d:v?[1,GH,1]:[0,0,0], c:[p*11.5+c-4.5, 0.4+GH/2, r-4.5], col:PC.grid, g:0}); });
+  return {boxes:boxes, groups:[{tip:'<b>'+n+'</b> shaded square'+(n===1?'':'s')+' = <b>'+n+'%</b>'}],
+    cap:n ? '<b>'+n+'</b> squares shaded'+(P>1?' (each grid is 100%)':' of 100')+' = <b>'+n+'%</b>' : 'Shade the grid and watch the squares rise.'};
+}
+function setupShadeGrid(host,cfg){
+  var P=cfg.plates||1, tasks=cfg.tasks, h='', p;
+  for (p=0;p<P;p++) h+='<div class="grid100" data-p="'+p+'" aria-label="Hundredths grid'+(P>1?' '+(p+1):'')+'"></div>';
+  host.innerHTML='<div class="two"><div>'+
+    '<div class="seg" role="group" aria-label="Shading tool"><button type="button" data-tool="col" class="on" aria-pressed="true">10%: a whole column</button><button type="button" data-tool="one" aria-pressed="false">1%: one square</button></div>'+
+    '<div class="grids popup'+(P>1?' multi':'')+'">'+h+'</div><p class="readout" aria-live="polite"></p>'+
+    '<div class="ctrl"><button type="button" class="btn ghost small gclear">Clear</button></div></div>'+
+    '<div><div class="box gtask"></div><div class="grid3d"></div></div></div>';
+  var gs=$$('.grid100',host), cells=[], tool='col', painting=false, paintVal=true, last=null, r, c;
+  gs.forEach(function(g,p){ for (r=0;r<10;r++) for (c=0;c<10;c++){ var d=document.createElement('div'); d.className='cell'; d.setAttribute('data-c',p*10+c); g.appendChild(d); cells.push(d); } });
+  var mirror=Demo3D($('.grid3d',host), {pitch:0.8, frames:[cellFrame(cells.map(function(){ return false; }),P)], aria:'3D model of your hundredths grid'});
+  var tb=$$('[data-tool]',host);
+  tb.forEach(function(t){ t.addEventListener('click', function(){ tool=t.getAttribute('data-tool'); tb.forEach(function(x){ x.classList.toggle('on',x===t); x.setAttribute('aria-pressed',String(x===t)); }); }); });
+  function group(cell){ if (tool!=='col') return [cell]; var cc=cell.getAttribute('data-c'); return cells.filter(function(x){ return x.getAttribute('data-c')===cc; }); }
+  function cellAt(e){ var el=document.elementFromPoint(e.clientX,e.clientY); return el && el.classList && el.classList.contains('cell') && gs.indexOf(el.parentNode)>=0 ? el : null; }
+  function preview(cell){ cells.forEach(function(x){ x.classList.remove('pre'); }); if (cell) group(cell).forEach(function(x){ x.classList.add('pre'); }); }
+  function apply(cell){ if (cell===last) return; last=cell; group(cell).forEach(function(x){ x.classList.toggle('on',paintVal); }); update(); }
+  gs.forEach(function(g){
+    g.addEventListener('pointerdown', function(e){
+      var cell=e.target.closest('.cell'); if (!cell) return;
+      e.preventDefault(); capture(g,e); painting=true; last=null;
+      paintVal=!group(cell).every(function(x){ return x.classList.contains('on'); });
+      apply(cell);
+    });
+    g.addEventListener('pointermove', function(e){ var cell=cellAt(e); if (e.pointerType==='mouse') preview(cell); if (painting && cell) apply(cell); });
+    g.addEventListener('pointerup', stop); g.addEventListener('pointercancel', stop);
+    g.addEventListener('pointerleave', function(){ preview(null); });
+  });
+  function stop(){ painting=false; last=null; }
+  function count(){ return cells.filter(function(x){ return x.classList.contains('on'); }).length; }
+  function clear(){ cells.forEach(function(x){ x.classList.remove('on'); }); update(); }
+  $('.gclear',host).addEventListener('click', clear);
+  function update(){
+    var n=count();
+    $('.readout',host).innerHTML = n===0 ? 'Nothing shaded yet: <b>0%</b>' :
+      '<b>'+n+'</b> out of 100 = '+frac(n,100)+' = <b class="bigval">'+n+'%</b>'+(n===100?'<br><span class="muted small">One whole grid: one whole.</span>':n>100?'<br><span class="muted small">More than one whole grid: more than 100%.</span>':'');
+    mirror.replace(0, cellFrame(cells.map(function(x){ return x.classList.contains('on'); }),P));
+  }
+  var box=$('.gtask',host);
+  tasks.forEach(function(t){ reg(t.id, box); });
+  function showTask(){
+    var t=tasks.filter(function(x){ return !solved(x.id); })[0];
+    if (!t){ box.innerHTML='<p class="prompt">'+(tasks.length>1?'All '+tasks.length+' tasks done ✓':'Done ✓')+'</p><p class="muted" style="margin:0">Keep shading to try other percents. Turn the 3D model to see it from the side.</p>'; updateReveals(); return; }
+    var k=tasks.indexOf(t)+1, ctx=t.what ? '<span class="muted small" style="display:block">'+t.what+'</span>' : '';
+    box.innerHTML='<p class="prompt">'+(tasks.length>1?'Task '+k+' of '+tasks.length+': ':'')+'Shade <span class="bigval">'+t.target+'%</span>'+(P>1?'.':' of the grid.')+ctx+'</p><button type="button" class="btn small check">Check my grid</button><div class="fb" aria-live="polite"></div>';
+    var f=$('.fb',box), chk=$('.check',box);
+    chk.addEventListener('click', function(){
+      var n=count(), ok=n===t.target; record(t.id,ok);
+      if (!ok){ fb(f,false,'You shaded '+n+'%. '+t.hint); react(false); return; }
+      react(true,item(t.id).first,chk); chk.hidden=true; updateReveals();
+      fb(f,true,(item(t.id).first?'Correct! ':'Yes, that’s it. ')+t.explain);
+      if (k<tasks.length){ var nx=document.createElement('button'); nx.type='button'; nx.className='btn small'; nx.style.marginTop='10px'; nx.textContent='Next task ▶'; nx.addEventListener('click', function(){ clear(); showTask(); }); box.appendChild(nx); }
+    });
+  }
+  update(); showTask();
+}
+
+/* ---------- page 2: one amount, three models ---------- */
+function setupModels(){
+  Demo3D($('#models3d'), {pitch:0.7, controls:{type:'pick'}, aria:'3D model of 40 percent', frames:same([
+    gridFrame(40,{name:'Hundredths grid', tip:'40 squares', cap:'40 of 100 squares = <b>40%</b>. Each square is 1%.'}),
+    gridFrame(40,{tenths:1, col:PC.tenths, name:'Tenths grid', tip:'4 strips', cap:'4 of 10 strips = <b>40%</b>. Each strip is 10%.'}),
+    barFrame(10,4,{name:'Tape diagram', tip:'4 parts', cap:'4 of 10 equal parts = <b>40%</b>. Each part is 10%.'})])});
+}
+/* ---------- page 3: build a tape diagram ---------- */
+function setupBar(){
+  var N=[2,4,5,10,20], n=10, on=[], demo=Demo3D($('#bar3d'), {pitch:0.6, frames:[barFrame(10,0,{})], aria:'3D model of your tape diagram'});
+  N.forEach(function(k){
+    var b=document.createElement('button'); b.type='button'; b.textContent=k+' parts';
+    b.addEventListener('click', function(){ n=k; on=[]; draw(); });
+    $('#barParts').appendChild(b);
+  });
+  function draw(){
+    $$('#barParts button').forEach(function(b,i){ b.classList.toggle('on', N[i]===n); b.setAttribute('aria-pressed', String(N[i]===n)); });
+    var bw=$('#barw'), each=100/n, i; bw.innerHTML='';
+    for (i=0;i<n;i++) (function(i){
+      var b=document.createElement('button'); b.type='button'; b.className=on[i]?'on':''; b.setAttribute('aria-pressed',String(!!on[i]));
+      b.setAttribute('aria-label','Part '+(i+1)+' of '+n); b.textContent=n<=10 ? fmt(each)+'%' : '';
+      b.addEventListener('click', function(){ on[i]=!on[i]; draw(); });
+      bw.appendChild(b);
+    })(i);
+    var k=on.filter(Boolean).length, pct=k*each;
+    $('#barRead').innerHTML='<b>'+k+'</b> of '+n+' parts = '+frac(k,n)+' = <b class="bigval">'+fmt(pct)+'%</b><br><span class="muted small">'+n+' equal parts make 100%, so each part is 100 ÷ '+n+' = '+fmt(each)+'%.</span>';
+    demo.replace(0, barFrame(n,on.slice(),{lab:'each part = '+fmt(each)+'%', tip:k+' shaded part'+(k===1?'':'s'), cap:k ? k+' × '+fmt(each)+'% = <b>'+fmt(pct)+'%</b>' : 'Tap parts of the bar to shade them.'}));
+  }
+  draw();
+}
+/* ---------- page 4: times as much -> percent ---------- */
+function setupTimes(){
+  var R=$('#timesR');
+  function pct(){ return Math.round(parseFloat(R.value)*100); }
+  function words(p){
+    if (p<100) return 'That is <b>less than one whole</b>: only part of one grid.';
+    if (p===100) return 'That is <b>exactly one whole</b>: one full grid.';
+    var full=Math.floor(p/100), rest=p%100;
+    return 'That is <b>more than one whole</b>: '+full+' full grid'+(full>1?'s':'')+(rest?' and '+rest+' squares of the next grid':'')+'.';
+  }
+  function fr(p){ return gridFrame(p,{plates:3, lab:showLab, tip:p+'%', cap:'<b>'+fmt(p/100)+'</b> times as much = <b>'+p+'%</b>'}); }
+  var demo=Demo3D($('#times3d'), {pitch:0.7, frames:[fr(pct())], aria:'3D model of the percent'});
+  function update(anim){
+    var p=pct();
+    $('#timesV').textContent=fmt(p/100)+' ×';
+    $('#timesRead').innerHTML='<b>'+fmt(p/100)+'</b> times as much = <b class="bigval">'+p+'%</b><br>'+words(p);
+    if (anim) demo.replace(0, fr(p));
+  }
+  R.addEventListener('input', function(){ update(true); });
+  update(false);
+}
+
+/* ---------- reflect, notes, results ---------- */
+function setupWriting(){
+  var ta=$('#reflect'); ta.value=state.reflect||''; ta.addEventListener('input', function(){ state.reflect=ta.value; save(); });
+  $$('[data-note]').forEach(function(t){ var k=t.getAttribute('data-note'); t.value=state.notes[k]||''; t.addEventListener('input', function(){ state.notes[k]=t.value; save(); }); });
+  var opts=['I tried a different model','I looked at it from a friend’s side','I drew a picture','I checked with a second model','I changed my mind after thinking again','I explained my thinking'];
+  opts.forEach(function(o){
+    var b=document.createElement('button'); b.type='button'; b.className='chip'+(state.mind.indexOf(o)>=0?' sel':''); b.textContent=o;
+    b.addEventListener('click', function(){ var i=state.mind.indexOf(o); if (i>=0) state.mind.splice(i,1); else state.mind.push(o); b.classList.toggle('sel',i<0); save(); });
+    $('#chips').appendChild(b);
+  });
+}
+function renderResults(){
+  var n=GRADED.length, first=0, notTried=0, miss={};
+  GRADED.forEach(function(id){ var it=state.items[id]; if (it && it.first===true) first++; else { if (!it || !it.tries) notTried++; miss[TOPIC[id]]=1; } });
+  var pct=Math.round(first/n*100), stars=pct>=90?3:pct>=70?2:pct>=40?1:0, nm=(state.name||'').trim();
+  var html='<div class="stars" aria-label="'+stars+' of 3 stars">'+'★★★'.slice(0,stars)+'☆☆☆'.slice(0,3-stars)+'</div>'+
+    '<h2 style="margin:4px 0">'+(nm?'Well done, '+esc(nm)+'!':'Well done!')+'</h2>'+
+    '<p class="score-big"><b>'+first+'</b> out of '+n+' right on the first try</p>'+
+    '<p class="muted small">Understand Percent · '+esc(new Date().toLocaleString('en-GB',{dateStyle:'medium',timeStyle:'short'}))+'</p>';
+  if (notTried) html+='<p>You have not answered <b>'+notTried+'</b> question'+(notTried===1?'':'s')+' yet. Use the page buttons to find them.</p>';
+  var topics=Object.keys(miss);
+  html+=topics.length ? '<div class="review"><b>Look at these again:</b><ul>'+topics.map(function(t){ return '<li>'+esc(t)+'</li>'; }).join('')+'</ul></div>' : '<p><b>Perfect! Nothing to review.</b></p>';
+  html+='<p class="muted small" style="margin:12px 0 0">Show this page to your teacher.</p>';
+  $('#results').innerHTML=html;
+}
+/* ---------- pages ---------- */
+var pages=$$('.page'), slider=null, hero=null;
+document.addEventListener('visibilitychange', function(){ if (hero) hero.active(state.idx===0); });
+function tipOf(pg){ return (!HOVER && pg.getAttribute('data-tip-touch')) || pg.getAttribute('data-tip'); }
+pages.forEach(function(pg,i){ var pn=$('.pno',pg); if (pn) pn.textContent=i+1; });
+var dotsBox=$('#dots');
+pages.forEach(function(pg,i){ var b=document.createElement('button'); b.type='button'; b.textContent=i+1; b.setAttribute('aria-label','Page '+(i+1)); b.addEventListener('click', function(){ show(i); }); dotsBox.appendChild(b); });
+function show(i, quiet){
+  i=Math.max(0,Math.min(pages.length-1,i));
+  var dir = i>=state.idx ? 'in-next' : 'in-prev';
+  pages.forEach(function(pg,k){ pg.classList.remove('in-next','in-prev'); pg.classList.toggle('active',k===i); });
+  void pages[i].offsetWidth; pages[i].classList.add(dir);
+  state.idx=i; save();
+  if (hero) hero.active(i===0);
+  DEMOS.forEach(function(d){ if (d.page===pages[i]) d.show(); });
+  var sw=$('.stage-wrap',pages[i]); if (sw){ sw.classList.remove('popup'); void sw.offsetWidth; sw.classList.add('popup'); }
+  if (pages[i].getAttribute('data-results')) renderResults();
+  $$('#dots button').forEach(function(b,k){ b.classList.toggle('on',k===i); });
+  $('#pageof').textContent='Page '+(i+1)+' of '+pages.length;
+  $('#back').disabled = i===0;
+  $('#next').hidden = i===pages.length-1;
+  window.scrollTo(0,0);
+  if (slider){ slider.place(); setTimeout(slider.place, 700); }
+  say(tipOf(pages[i]));
+}
+$('#back').addEventListener('click', function(){ show(state.idx-1); });
+$('#next').addEventListener('click', function(){ show(state.idx+1); });
+var armed=false;
+$('#restart').addEventListener('click', function(){
+  if (!armed){ armed=true; this.textContent='Tap again to erase all answers'; return; }
+  try { localStorage.removeItem(KEY); } catch (e) {}
+  location.reload();
+});
+/* ---------- boot ---------- */
+load();
+if (!HOVER) $$('.hover-text').forEach(function(el){ el.textContent=el.getAttribute('data-touch'); });
+$$('[data-speaker]').forEach(function(el){ el.outerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>'; });
+if (!CAN_SPEAK) $$('.say').forEach(function(b){ b.hidden=true; });
+$$('[data-say]').forEach(function(b){ b.addEventListener('click', function(){ speak(b.getAttribute('data-say')); }); });
+var nameInp=$('#name'); nameInp.value=state.name||''; nameInp.addEventListener('input', function(){ state.name=nameInp.value; save(); });
+$('#board').innerHTML=boardSVG();
+hero=setupHero();
+// questions and shading grids are registered in page order, so the results list follows the book
+$$('[data-q],[data-grid]').forEach(function(el){
+  if (el.hasAttribute('data-grid')){ setupShadeGrid(el, GRIDS[el.getAttribute('data-grid')]); return; }
+  var id=el.getAttribute('data-q'), q=Q[id]; reg(id,el);
+  if (q.type==='multi') renderMulti(el,id,q); else if (q.type==='num') renderNum(el,id,q); else renderChoice(el,id,q);
+  attach3D(el,id);
+});
+setupModels();
+setupBar();
+setupTimes();
+setupWriting();
+updateReveals();
+updateScore(false);
+show(state.idx||0, true);
+window.__lesson={state:state, GRADED:GRADED, Q:Q, show:show, DEMOS:DEMOS};
+})();
+</script>
+</body>
+</html>
